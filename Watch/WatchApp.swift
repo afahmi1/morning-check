@@ -19,51 +19,80 @@ struct MorningCheckWatchApp: App {
 private struct WatchCheckIn: View {
     @ObservedObject var model: WatchModel
     @Environment(\.scenePhase) private var phase
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var showErase = false
+
+    private let palette = DayBreakPalette(.dark)
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 9) {
+                VStack(alignment: .leading, spacing: 6) {
+                    DayBreakBrand(iconSize: 17).font(.footnote.weight(.semibold)).foregroundStyle(palette.muted)
                     if let rating = model.today {
-                        DayBreakBrand(iconSize: 18)
-                            .font(.caption2.monospaced().weight(.semibold)).foregroundStyle(.yellow)
-                        Text("\(rating.value.rawValue) / 5").font(.system(.largeTitle, design: .rounded, weight: .bold))
-                        Text(rating.value.label).font(.headline)
-                        if model.disk.acknowledged.contains(rating.id) {
-                            Label("Received by iPhone", systemImage: "checkmark.circle").font(.footnote)
-                        } else {
-                            Text("Saved on Watch. Waiting for iPhone.").font(.footnote).foregroundStyle(.secondary)
-                            Button("Retry sync") { model.sendPending() }.font(.footnote)
-                        }
+                        saved(rating)
                     } else {
-                        Text("How rested do you feel?").font(.system(.headline, design: .rounded, weight: .bold))
-                        Text("Rate before seeing Sleep Score.").font(.caption2).foregroundStyle(.secondary)
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3), spacing: 6) {
-                            ForEach(Restedness.allCases, id: \.rawValue) { value in
-                                Button { model.record(value) } label: {
-                                    Text("\(value.rawValue)").font(.title3.monospacedDigit().bold()).foregroundStyle(.yellow)
-                                        .frame(maxWidth: .infinity, minHeight: 43)
-                                        .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityLabel("\(value.rawValue): \(value.label)")
-                                .accessibilityIdentifier("watch-rating-\(value.rawValue)")
-                            }
-                        }
-                        Text("1 Not at all   ·   5 Very well").font(.caption2).foregroundStyle(.secondary)
+                        choices
                     }
                     if !model.disk.diary.rows.isEmpty {
-                        Button("Erase Watch log", role: .destructive) { showErase = true }.font(.footnote)
+                        DayBreakRule(palette: palette)
+                        Button("Erase Watch log", role: .destructive) { showErase = true }
+                            .font(.footnote).foregroundStyle(palette.destructive)
+                            .frame(minHeight: 44, alignment: .leading)
                     }
-                    if let error = model.error { Text(error).font(.footnote).foregroundStyle(.red) }
-                }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 4)
+                    if let error = model.error {
+                        Label(error, systemImage: "exclamationmark.circle").font(.footnote).foregroundStyle(palette.destructive)
+                    }
+                }
+                .foregroundStyle(palette.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 4).padding(.bottom, 6)
             }
-            .containerBackground(Color(red: 0.10, green: 0.13, blue: 0.19).gradient, for: .navigation)
+            .containerBackground(palette.canvas, for: .navigation)
+            .tint(palette.accent)
             .confirmationDialog("Erase Watch log?", isPresented: $showErase, titleVisibility: .visible) {
                 Button("Erase Watch log", role: .destructive) { model.eraseLocal() }
             } message: { Text("This does not erase a rating already received by your iPhone.") }
             .onChange(of: phase, initial: true) { _, new in if new == .active { model.sendPending() } }
+        }
+    }
+
+    private var choices: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("How rested?").font(.dayBreakWristTitle).accessibilityAddTraits(.isHeader)
+            Text("Before Apple’s score.").font(.caption2).foregroundStyle(palette.muted)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 68 : 44), spacing: 4)], spacing: 4) {
+                ForEach(Restedness.allCases, id: \.rawValue) { value in
+                    Button { model.record(value) } label: {
+                        Text("\(value.rawValue)").font(.headline.monospacedDigit().weight(.semibold))
+                            .foregroundStyle(palette.accent)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .dayBreakPanel(palette, radius: 10)
+                            .contentShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(value.rawValue) of 5, \(value.label)")
+                    .accessibilityIdentifier("watch-rating-\(value.rawValue)")
+                }
+            }
+            .frame(maxWidth: 184, alignment: .leading)
+            Text("1 Not at all / 5 Very well").font(.caption2).foregroundStyle(palette.muted)
+        }
+    }
+
+    private func saved(_ rating: Rating) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Rating saved").font(.dayBreakWristTitle).accessibilityAddTraits(.isHeader)
+            Text("\(rating.value.rawValue) / 5").font(.dayBreakDisplay.monospacedDigit())
+                .foregroundStyle(palette.accent).accessibilityLabel("\(rating.value.rawValue) of 5")
+            Text(rating.value.label).font(.footnote).foregroundStyle(palette.muted)
+            if model.disk.acknowledged.contains(rating.id) {
+                Label("Received by iPhone", systemImage: "checkmark.circle").font(.footnote).foregroundStyle(palette.steady)
+            } else {
+                Text("Saved on Watch. Waiting for iPhone.").font(.footnote).foregroundStyle(palette.muted)
+                Button("Retry sync") { model.sendPending() }
+                    .buttonStyle(DayBreakActionStyle(palette: palette, prominence: .secondary))
+            }
         }
     }
 }

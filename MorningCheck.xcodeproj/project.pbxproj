@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		04924DDBD65F701D58E3B2B8 /* MorningCheckUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDE5323F5B4FC8A314F9E8C /* MorningCheckUITests.swift */; };
+		04C190D34D60833D876D5112 /* ScorePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF66120CECBB8838B364597F /* ScorePanel.swift */; };
 		0C7585C5D4B3DA912CCBB121 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3EE6760AFD6137F11AE410 /* LocalFile.swift */; };
 		1805D1887E7FE56AD29534BE /* WatchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85683057550F7BF183C27CB /* WatchModel.swift */; };
 		26D54584EB3D516326411F89 /* PromptStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */; };
 		35CAA5C2DC1AD6B4BC51CB6B /* Shortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69DAAC7577B3990894934D /* Shortcut.swift */; };
+		39359F85A463A3742F2963E1 /* DayBreakDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5621BBFE67DF44514441012 /* DayBreakDesign.swift */; };
 		5DD427F222EF38A88C488805 /* MorningCheckCore in Frameworks */ = {isa = PBXBuildFile; productRef = D606BABDA6351E29174BC0F5 /* MorningCheckCore */; };
 		643252FC40F7F6AD4ED6EA6F /* SleepSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87A22A0F1CBBD791DA38F1B /* SleepSignal.swift */; };
 		66CEC6267EBE1FFD1DBCFA15 /* MorningCheckWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = DCD3763A0EF985B6DA933F20 /* MorningCheckWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -19,9 +21,12 @@
 		845EAFEBEDB33D09A4771FC9 /* DayBreakBrand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CC28158286D70E587E0545 /* DayBreakBrand.swift */; };
 		8617BC75D79C1D8847C3B585 /* MorningCheckCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAF37C8DD8AAB81CC3208C5 /* MorningCheckCore */; };
 		9AC3CF562428D9C3BFAC016E /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3EE6760AFD6137F11AE410 /* LocalFile.swift */; };
+		9E013455541823D3C2FCC014 /* DayBreakDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5621BBFE67DF44514441012 /* DayBreakDesign.swift */; };
 		ADEAE76540671D8465005E07 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F97C6F8FFE92742EB3889F44 /* Assets.xcassets */; };
 		B8D7C4A4422450362B62303B /* PhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890066CFEF2DAC50D67E447C /* PhoneApp.swift */; };
+		C470BEA2BB824DE96DA3BEDD /* ComparePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75BA23D27B5111CFE3EFB44 /* ComparePage.swift */; };
 		DBB09C79A8DAFC34848867EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F97C6F8FFE92742EB3889F44 /* Assets.xcassets */; };
+		E92EF7D6EE9A0A577351A0E4 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D74028E602350206AB563 /* SettingsPage.swift */; };
 		E93019AC1990DEDBE3C9A166 /* DayBreakBrand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CC28158286D70E587E0545 /* DayBreakBrand.swift */; };
 		F2FA93B1129EF1D5619A3E64 /* PhoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF3F2E60AB8E8A943B5F7CA /* PhoneModel.swift */; };
 		F6E0BD42B38F0342DFC9BC6D /* WatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2356453F3561C78699364616 /* WatchApp.swift */; };
@@ -62,17 +67,21 @@
 		0A69DAAC7577B3990894934D /* Shortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcut.swift; sourceTree = "<group>"; };
 		0D3EE6760AFD6137F11AE410 /* LocalFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFile.swift; sourceTree = "<group>"; };
 		0F9CB2918312AED1FB3F39FA /* morning-check */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "morning-check"; path = .; sourceTree = SOURCE_ROOT; };
+		1A2D74028E602350206AB563 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		1EF3F2E60AB8E8A943B5F7CA /* PhoneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneModel.swift; sourceTree = "<group>"; };
 		23077C32CC95E7D0F59DD756 /* MorningCheckUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MorningCheckUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2356453F3561C78699364616 /* WatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchApp.swift; sourceTree = "<group>"; };
 		73CC28158286D70E587E0545 /* DayBreakBrand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBreakBrand.swift; sourceTree = "<group>"; };
 		7CDE5323F5B4FC8A314F9E8C /* MorningCheckUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorningCheckUITests.swift; sourceTree = "<group>"; };
 		890066CFEF2DAC50D67E447C /* PhoneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneApp.swift; sourceTree = "<group>"; };
+		AF66120CECBB8838B364597F /* ScorePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScorePanel.swift; sourceTree = "<group>"; };
 		B663D8B5B4EA0EF01D60C6C1 /* MorningCheck.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MorningCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptStyle.swift; sourceTree = "<group>"; };
 		C87A22A0F1CBBD791DA38F1B /* SleepSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepSignal.swift; sourceTree = "<group>"; };
 		D85683057550F7BF183C27CB /* WatchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchModel.swift; sourceTree = "<group>"; };
 		DCD3763A0EF985B6DA933F20 /* MorningCheckWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MorningCheckWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E5621BBFE67DF44514441012 /* DayBreakDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBreakDesign.swift; sourceTree = "<group>"; };
+		F75BA23D27B5111CFE3EFB44 /* ComparePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComparePage.swift; sourceTree = "<group>"; };
 		F97C6F8FFE92742EB3889F44 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,6 +158,7 @@
 			children = (
 				F97C6F8FFE92742EB3889F44 /* Assets.xcassets */,
 				73CC28158286D70E587E0545 /* DayBreakBrand.swift */,
+				E5621BBFE67DF44514441012 /* DayBreakDesign.swift */,
 				0D3EE6760AFD6137F11AE410 /* LocalFile.swift */,
 				C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */,
 			);
@@ -158,8 +168,11 @@
 		C10F57B0EDB1E4A57FC050D0 /* Phone */ = {
 			isa = PBXGroup;
 			children = (
+				F75BA23D27B5111CFE3EFB44 /* ComparePage.swift */,
 				890066CFEF2DAC50D67E447C /* PhoneApp.swift */,
 				1EF3F2E60AB8E8A943B5F7CA /* PhoneModel.swift */,
+				AF66120CECBB8838B364597F /* ScorePanel.swift */,
+				1A2D74028E602350206AB563 /* SettingsPage.swift */,
 				0A69DAAC7577B3990894934D /* Shortcut.swift */,
 				C87A22A0F1CBBD791DA38F1B /* SleepSignal.swift */,
 			);
@@ -299,11 +312,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C470BEA2BB824DE96DA3BEDD /* ComparePage.swift in Sources */,
 				845EAFEBEDB33D09A4771FC9 /* DayBreakBrand.swift in Sources */,
+				9E013455541823D3C2FCC014 /* DayBreakDesign.swift in Sources */,
 				0C7585C5D4B3DA912CCBB121 /* LocalFile.swift in Sources */,
 				B8D7C4A4422450362B62303B /* PhoneApp.swift in Sources */,
 				F2FA93B1129EF1D5619A3E64 /* PhoneModel.swift in Sources */,
 				8055D334007359656626A035 /* PromptStyle.swift in Sources */,
+				04C190D34D60833D876D5112 /* ScorePanel.swift in Sources */,
+				E92EF7D6EE9A0A577351A0E4 /* SettingsPage.swift in Sources */,
 				35CAA5C2DC1AD6B4BC51CB6B /* Shortcut.swift in Sources */,
 				643252FC40F7F6AD4ED6EA6F /* SleepSignal.swift in Sources */,
 			);
@@ -314,6 +331,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E93019AC1990DEDBE3C9A166 /* DayBreakBrand.swift in Sources */,
+				39359F85A463A3742F2963E1 /* DayBreakDesign.swift in Sources */,
 				9AC3CF562428D9C3BFAC016E /* LocalFile.swift in Sources */,
 				26D54584EB3D516326411F89 /* PromptStyle.swift in Sources */,
 				F6E0BD42B38F0342DFC9BC6D /* WatchApp.swift in Sources */,
@@ -405,7 +423,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -481,7 +499,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

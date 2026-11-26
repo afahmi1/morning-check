@@ -12,6 +12,10 @@ DayBreak keeps the two numbers separate. Rate your restedness from **1–5 befor
 
 This is a personal comparison, not a claim that the watch is wrong or that either number diagnoses a sleep problem. The app leaves missing values blank, and the results stay on your devices.
 
+## Interface
+
+DayBreak pairs a warm Paper palette in light mode with a low-glare Ash palette in dark mode. A top switcher keeps **Check-in** and **Compare** under one header, with serif prompts and grouped rows. The Watch uses the same Ash palette and puts the five choices first. The scarab and sunrise remain the app icon.
+
 ## Use it
 
 1. Open **DayBreak** on your Watch or iPhone after waking. Choose how rested you feel before looking at Apple’s score. The Watch saves your response locally and tries to transfer it directly to the paired iPhone. “Received by iPhone” means the phone acknowledged the rating payload; the earliest report of the day is the one shown if you entered both.
@@ -56,7 +60,7 @@ Open `MorningCheck.xcodeproj` in Xcode. The iPhone target uses iOS 18+ APIs and 
 
 ## Run the checks
 
-`swift test` runs the core tests. To also run OCR against an actual screen layout, download the [public illustration linked from Apple Support 108906](https://cdsassets.apple.com/live/7WUAS350/images/health/ios-27-iphone-17-pro-health-sleep-sleep-score.png), then pass its local path as `MORNING_CHECK_APPLE_FIXTURE` to `swift test`. The image is not shipped with the source. Run the **MorningCheck** scheme’s UI test on an iPhone simulator to verify the rating-first flow and comparison view; it uses a disposable in-memory store. Watch Connectivity background transfers and HealthKit background delivery are not verified by simulators.
+`swift test` runs the core tests. To also run OCR against an actual screen layout, download the [public illustration linked from Apple Support 108906](https://cdsassets.apple.com/live/7WUAS350/images/health/ios-27-iphone-17-pro-health-sleep-sleep-score.png), then pass its local path as `MORNING_CHECK_APPLE_FIXTURE` to `swift test`. The image is not shipped with the source. Run the **MorningCheck** scheme’s UI tests on an iPhone simulator to verify the rating-first flow, workspace switcher, and comparison view. They use a disposable in-memory store. Watch Connectivity background transfers and HealthKit background delivery are not verified by simulators.
 
 ## Contributing
 
