@@ -64,7 +64,7 @@ private struct MorningHome: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 HStack {
-                    Label("MORNING CHECK", systemImage: "sun.horizon.fill")
+                    Label("DayBreak", systemImage: "sun.horizon.fill")
                         .font(.caption.monospaced().weight(.semibold)).foregroundStyle(ink)
                     Spacer()
                     Text(today).font(.caption.monospacedDigit()).foregroundStyle(.secondary)
@@ -96,7 +96,7 @@ private struct MorningHome: View {
                     }
                 }
                 if let error = model.storageError { Text(error).foregroundStyle(.red).font(.footnote) }
-                Text("First report of the day is kept. You can also rate from Morning Check on your Watch.")
+                Text("First report of the day is kept. You can also rate from DayBreak on your Watch.")
                     .font(.footnote).foregroundStyle(.secondary)
             }.padding(20)
         }

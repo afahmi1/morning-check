@@ -7,7 +7,7 @@ settings:
   base:
     SWIFT_VERSION: '5.0'
     MARKETING_VERSION: '0.1.0'
-    CURRENT_PROJECT_VERSION: '1'
+    CURRENT_PROJECT_VERSION: '2'
     ENABLE_USER_SCRIPT_SANDBOXING: YES
 packages:
   MorningCheckCore:
@@ -35,9 +35,10 @@ targets:
     info:
       path: Config/Phone-Info.plist
       properties:
-        CFBundleDisplayName: Morning Check
+        CFBundleDisplayName: DayBreak
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
-        NSHealthShareUsageDescription: Morning Check reads estimated sleep intervals to nudge you when the Watch's overnight data arrives. It does not write to Health or send this data to a server.
+        NSHealthShareUsageDescription: DayBreak reads estimated sleep intervals to nudge you when the Watch's overnight data arrives. It does not write to Health or send this data to a server.
   MorningCheckWatch:
     type: application
     platform: watchOS
@@ -52,7 +53,8 @@ targets:
     info:
       path: Config/Watch-Info.plist
       properties:
-        CFBundleDisplayName: Morning Check
+        CFBundleDisplayName: DayBreak
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
         WKCompanionAppBundleIdentifier: local.bacta.morningcheck
         WKRunsIndependentlyOfCompanionApp: false

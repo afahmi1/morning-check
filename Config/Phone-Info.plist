@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Morning Check</string>
+	<string>DayBreak</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,9 +19,9 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Morning Check reads estimated sleep intervals to nudge you when the Watch's overnight data arrives. It does not write to Health or send this data to a server.</string>
+	<string>DayBreak reads estimated sleep intervals to nudge you when the Watch's overnight data arrives. It does not write to Health or send this data to a server.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 </dict>

@@ -1,4 +1,4 @@
-# Morning Check
+# DayBreak
 
 An open-source iPhone and Apple Watch app that shows **where Apple's Sleep Score and how rested you feel agree, and where they don't**.
 
@@ -6,14 +6,14 @@ An open-source iPhone and Apple Watch app that shows **where Apple's Sleep Score
 
 [Apple's Sleep Score](https://support.apple.com/en-us/108906) uses estimates of sleep duration, bedtime consistency, and interruptions. It doesn't ask how refreshed you feel when you wake up. A high score and low restedness can both be real observations; they answer different questions.
 
-Morning Check keeps the two numbers separate. Rate your restedness from **1–5 before seeing the score**, then pair it with the **exact 0–100 number Apple displayed** for that morning. The chart shows the relationship across mornings and calls out high-score mornings when you didn't feel rested. The mismatch is worth seeing on its own, not averaging away into another score.
+DayBreak keeps the two numbers separate. Rate your restedness from **1–5 before seeing the score**, then pair it with the **exact 0–100 number Apple displayed** for that morning. The chart shows the relationship across mornings and calls out high-score mornings when you didn't feel rested. The mismatch is worth seeing on its own, not averaging away into another score.
 
 This is a personal comparison, not a claim that the watch is wrong or that either number diagnoses a sleep problem. The app leaves missing values blank, and the results stay on your devices.
 
 ## Use it
 
-1. Open **Morning Check** on your Watch or iPhone after waking. Choose how rested you feel before looking at Apple’s score. The Watch saves your response locally and tries to transfer it directly to the paired iPhone. “Received by iPhone” means the phone acknowledged the rating payload; the earliest report of the day is the one shown if you entered both.
-2. Open **Health → Sleep → Sleep Score**, and check the wake date. On your iPhone, enter the exact number in Morning Check, or choose **Read screenshot** and select a screenshot of Apple’s English-language detail card. Include the Sleep Score heading, date, and large score and band. Verify both the proposed number and the date. Reading the image does not save anything automatically. The original screenshot stays where you took it; the app does not keep a copy. If the image is unclear, type the number instead. To add a score later, select that wake date under **Compare → Morning history**.
+1. Open **DayBreak** on your Watch or iPhone after waking. Choose how rested you feel before looking at Apple’s score. The Watch saves your response locally and tries to transfer it directly to the paired iPhone. “Received by iPhone” means the phone acknowledged the rating payload; the earliest report of the day is the one shown if you entered both.
+2. Open **Health → Sleep → Sleep Score**, and check the wake date. On your iPhone, enter the exact number in DayBreak, or choose **Read screenshot** and select a screenshot of Apple’s English-language detail card. Include the Sleep Score heading, date, and large score and band. Verify both the proposed number and the date. Reading the image does not save anything automatically. The original screenshot stays where you took it; the app does not keep a copy. If the image is unclear, type the number instead. To add a score later, select that wake date under **Compare → Morning history**.
 3. **Compare** charts the paired observations, counts missing scores, and shows how often a high Apple score (81–100) coincided with low restedness (1–2). A tie-aware Spearman rank correlation appears when there are at least five pairs and both measures vary. Treat that as descriptive; start by collecting about a month of pairs. Missing data is left missing and scores are never estimated. Titles and views are in English.
 
 ## Choose a prompt source on iPhone
@@ -21,7 +21,7 @@ This is a personal comparison, not a claim that the watch is wrong or that eithe
 Automatic prompts start **off**. Manual check-ins always work.
 
 - **When Watch sleep data arrives:** in Settings, select this mode and allow notifications and sleep read access. The app observes `.sleepAnalysis`, queries recent Apple Watch asleep intervals, merges overlaps and nearby intervals, and schedules at most one prompt per wake date after a recent qualifying session. For this prototype, a session must contain at least three hours of asleep intervals, with an end within the last two hours on the current local day. This helps skip naps and old sync batches, but can miss short nights, detect a long daytime sleep, or fire late. The operating system can defer background delivery; the phone may need to unlock before the app can read the sleep records. No alarm, Sleep Focus, polling, third-party cloud, or overnight workout is required.
-- **Apple Sleep Score alert experiment (iOS 27):** select this mode in Morning Check. In Shortcuts, create a shortcut with **Check In from Apple Sleep Alert**, then add a **Notification** automation for the app that actually sends the Sleep Score alert, if selectable. Try it without filters first, then use the actual alert's title or message as a filter before leaving it enabled. If the trigger exposes notification variables, pass its text (include the Sleep Score label and message, if available) and delivery date. Leave the text blank for a prompt-only test. A unique candidate is staged without showing it, then can be confirmed after rating. If the actual Watch alert never triggers Shortcuts, switch to sleep-data mode. Receiving the Watch-only alert in Shortcuts has **not** been verified. This mode does not suppress Apple's own banner; if you see its number first, that day's rating is no longer blind.
+- **Apple Sleep Score alert experiment (iOS 27):** select this mode in DayBreak. In Shortcuts, create a shortcut with **Check In from Apple Sleep Alert**, then add a **Notification** automation for the app that actually sends the Sleep Score alert, if selectable. Try it without filters first, then use the actual alert's title or message as a filter before leaving it enabled. If the trigger exposes notification variables, pass its text (include the Sleep Score label and message, if available) and delivery date. Leave the text blank for a prompt-only test. A unique candidate is staged without showing it, then can be confirmed after rating. If the actual Watch alert never triggers Shortcuts, switch to sleep-data mode. Receiving the Watch-only alert in Shortcuts has **not** been verified. This mode does not suppress Apple's own banner; if you see its number first, that day's rating is no longer blind.
 - **Routing test:** tap **Test Watch notification routing** and lock your iPhone while keeping your Watch unlocked and on your wrist. A neutral notification is scheduled about 12 seconds later. It never creates a diary entry. Apple decides whether to deliver iPhone-originated local notifications to the phone or the Watch, based on device state and notification settings. This tests notification routing, not wake detection.
 
 ## Open the project
@@ -42,7 +42,7 @@ Open `MorningCheck.xcodeproj` in Xcode. The iPhone target uses iOS 18+ APIs and 
 
 - No network client, analytics, account, CloudKit, or iCloud Drive. Apple Watch and iPhone exchange only your rating payload and its receipt using Watch Connectivity. The paired phone holds the comparison. There is no Mac or iPad sync.
 - Sleep access is optional and read-only. The transient interval query only signals a prompt; raw HealthKit samples are not persisted. The log lives in the app sandbox under Application Support with backup exclusion and protection until the first device unlock after restart, so transfers can be handled later in the background. To remove it, use **Erase iPhone log** and **Erase Watch log** separately. The iPhone ignores older queued Watch data after its log is erased. The app does not change Apple Health when you erase its log.
-- HealthKit exposes predefined data types; a third-party app cannot add a custom numerical Restedness chart to Apple Health. The two numbers appear together in Morning Check, **not** inside Health. No private API or spoofed symptom data is used.
+- HealthKit exposes predefined data types; a third-party app cannot add a custom numerical Restedness chart to Apple Health. The two numbers appear together in DayBreak, **not** inside Health. No private API or spoofed symptom data is used.
 - This is a personal tracking prototype, not a medical tool, a validated diagnostic test, or a claim that Sleep Score should match subjective restedness on any particular morning.
 
 ## How the open-source pieces informed the build
@@ -60,4 +60,4 @@ Open `MorningCheck.xcodeproj` in Xcode. The iPhone target uses iOS 18+ APIs and 
 
 Device and OS versions, steps to reproduce, and redacted logs are helpful in bug reports. Please don't attach Apple Health exports, personal ratings, or screenshots containing health or account data to public issues. For a privacy bug, use GitHub's private vulnerability reporting if available.
 
-Morning Check is [MIT licensed](LICENSE) and is not affiliated with Apple.
+DayBreak is [MIT licensed](LICENSE) and is not affiliated with Apple.

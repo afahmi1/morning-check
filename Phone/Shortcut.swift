@@ -19,6 +19,6 @@ struct MorningCheckShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: MorningCheckFromAlert(),
                     phrases: ["Check in from a sleep alert with \(.applicationName)"],
-                    shortTitle: "Morning Check-In", systemImageName: "sun.horizon")
+                    shortTitle: "DayBreak Check-In", systemImageName: "sun.horizon")
     }
 }

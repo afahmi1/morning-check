@@ -94,7 +94,7 @@ final class PhoneModel: NSObject, ObservableObject {
                     try await signal.enableDelivery()
                     promptStatus = "Background delivery requested. Timing and Health access still need a device check."
                 } catch {
-                    promptStatus = "Background delivery unavailable. Morning Check can check for new sleep data while open."
+                    promptStatus = "Background delivery unavailable. DayBreak can check for new sleep data while open."
                 }
                 await evaluateSleep()
             }
@@ -123,7 +123,7 @@ final class PhoneModel: NSObject, ObservableObject {
 
     func acceptAlertText(_ text: String?, at deliveryDate: Date?) async -> String {
         start()
-        guard mode == .appleAlert else { return "Enable Apple alert experiment in Morning Check first." }
+        guard mode == .appleAlert else { return "Enable Apple alert experiment in DayBreak first." }
         let now = Date.now
         let at = deliveryDate ?? now
         let age = now.timeIntervalSince(at)
@@ -148,7 +148,7 @@ final class PhoneModel: NSObject, ObservableObject {
                 promptStatus = "Allow notifications to run the routing test."; return
             }
             let content = UNMutableNotificationContent()
-            content.title = "Morning Check test"
+            content.title = "DayBreak test"
             content.body = "Notification routing test. Nothing will be logged."
             content.sound = .default
             let request = UNNotificationRequest(identifier: "morning-check-test", content: content,
@@ -163,7 +163,7 @@ final class PhoneModel: NSObject, ObservableObject {
               busyDays.insert(day).inserted else { return false }
         defer { busyDays.remove(day) }
         let content = UNMutableNotificationContent()
-        content.title = "Morning Check"
+        content.title = "DayBreak"
         content.body = "How rested do you feel?"
         content.categoryIdentifier = PromptStyle.category
         content.sound = .default

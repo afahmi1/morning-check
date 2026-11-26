@@ -7,6 +7,7 @@ final class MorningCheckUITests: XCTestCase {
         app.launchArguments = ["-isolated-ui-test"]
         app.launch()
         XCTAssertTrue(app.staticTexts["How rested do you feel?"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["DayBreak"].exists)
         XCTAssertFalse(app.textFields["apple-score-field"].exists)
         app.buttons["phone-rating-1"].tap()
         let field = app.textFields["apple-score-field"]
