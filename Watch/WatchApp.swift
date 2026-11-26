@@ -26,7 +26,7 @@ private struct WatchCheckIn: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 9) {
                     if let rating = model.today {
-                        Label("DayBreak", systemImage: "sun.horizon.fill")
+                        DayBreakBrand(iconSize: 18)
                             .font(.caption2.monospaced().weight(.semibold)).foregroundStyle(.yellow)
                         Text("\(rating.value.rawValue) / 5").font(.system(.largeTitle, design: .rounded, weight: .bold))
                         Text(rating.value.label).font(.headline)

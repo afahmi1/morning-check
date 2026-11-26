@@ -16,9 +16,13 @@
 		643252FC40F7F6AD4ED6EA6F /* SleepSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87A22A0F1CBBD791DA38F1B /* SleepSignal.swift */; };
 		66CEC6267EBE1FFD1DBCFA15 /* MorningCheckWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = DCD3763A0EF985B6DA933F20 /* MorningCheckWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8055D334007359656626A035 /* PromptStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */; };
+		845EAFEBEDB33D09A4771FC9 /* DayBreakBrand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CC28158286D70E587E0545 /* DayBreakBrand.swift */; };
 		8617BC75D79C1D8847C3B585 /* MorningCheckCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5BAF37C8DD8AAB81CC3208C5 /* MorningCheckCore */; };
 		9AC3CF562428D9C3BFAC016E /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3EE6760AFD6137F11AE410 /* LocalFile.swift */; };
+		ADEAE76540671D8465005E07 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F97C6F8FFE92742EB3889F44 /* Assets.xcassets */; };
 		B8D7C4A4422450362B62303B /* PhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890066CFEF2DAC50D67E447C /* PhoneApp.swift */; };
+		DBB09C79A8DAFC34848867EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F97C6F8FFE92742EB3889F44 /* Assets.xcassets */; };
+		E93019AC1990DEDBE3C9A166 /* DayBreakBrand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CC28158286D70E587E0545 /* DayBreakBrand.swift */; };
 		F2FA93B1129EF1D5619A3E64 /* PhoneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EF3F2E60AB8E8A943B5F7CA /* PhoneModel.swift */; };
 		F6E0BD42B38F0342DFC9BC6D /* WatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2356453F3561C78699364616 /* WatchApp.swift */; };
 /* End PBXBuildFile section */
@@ -61,6 +65,7 @@
 		1EF3F2E60AB8E8A943B5F7CA /* PhoneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneModel.swift; sourceTree = "<group>"; };
 		23077C32CC95E7D0F59DD756 /* MorningCheckUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MorningCheckUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2356453F3561C78699364616 /* WatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchApp.swift; sourceTree = "<group>"; };
+		73CC28158286D70E587E0545 /* DayBreakBrand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBreakBrand.swift; sourceTree = "<group>"; };
 		7CDE5323F5B4FC8A314F9E8C /* MorningCheckUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorningCheckUITests.swift; sourceTree = "<group>"; };
 		890066CFEF2DAC50D67E447C /* PhoneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneApp.swift; sourceTree = "<group>"; };
 		B663D8B5B4EA0EF01D60C6C1 /* MorningCheck.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MorningCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -68,6 +73,7 @@
 		C87A22A0F1CBBD791DA38F1B /* SleepSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepSignal.swift; sourceTree = "<group>"; };
 		D85683057550F7BF183C27CB /* WatchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchModel.swift; sourceTree = "<group>"; };
 		DCD3763A0EF985B6DA933F20 /* MorningCheckWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MorningCheckWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F97C6F8FFE92742EB3889F44 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +147,8 @@
 		A30DC427E73FAE9764E5CF2D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				F97C6F8FFE92742EB3889F44 /* Assets.xcassets */,
+				73CC28158286D70E587E0545 /* DayBreakBrand.swift */,
 				0D3EE6760AFD6137F11AE410 /* LocalFile.swift */,
 				C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */,
 			);
@@ -166,6 +174,7 @@
 			buildConfigurationList = 0AF91C3AC1EC6F2314AFBC20 /* Build configuration list for PBXNativeTarget "MorningCheckWatch" */;
 			buildPhases = (
 				AE2C1E49DE9B4E14AF535BD4 /* Sources */,
+				09D1956098D26F18C46F4C35 /* Resources */,
 				7EAF3FB7A709AFDED40435D6 /* Frameworks */,
 			);
 			buildRules = (
@@ -203,6 +212,7 @@
 			buildConfigurationList = 2FE92AF665FF211083D4C840 /* Build configuration list for PBXNativeTarget "MorningCheck" */;
 			buildPhases = (
 				62BE444F7C5E706E16A7ACDD /* Sources */,
+				84566D3C8CDCC8B24D5E0E53 /* Resources */,
 				A34110609FD8174F50709348 /* Frameworks */,
 				0D033B1A8CC982F338C172C2 /* Embed Watch Content */,
 			);
@@ -257,6 +267,25 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		09D1956098D26F18C46F4C35 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DBB09C79A8DAFC34848867EB /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84566D3C8CDCC8B24D5E0E53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADEAE76540671D8465005E07 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		144B867B42E2D861DAA4FD99 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -270,6 +299,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				845EAFEBEDB33D09A4771FC9 /* DayBreakBrand.swift in Sources */,
 				0C7585C5D4B3DA912CCBB121 /* LocalFile.swift in Sources */,
 				B8D7C4A4422450362B62303B /* PhoneApp.swift in Sources */,
 				F2FA93B1129EF1D5619A3E64 /* PhoneModel.swift in Sources */,
@@ -283,6 +313,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E93019AC1990DEDBE3C9A166 /* DayBreakBrand.swift in Sources */,
 				9AC3CF562428D9C3BFAC016E /* LocalFile.swift in Sources */,
 				26D54584EB3D516326411F89 /* PromptStyle.swift in Sources */,
 				F6E0BD42B38F0342DFC9BC6D /* WatchApp.swift in Sources */,
@@ -374,7 +405,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -450,7 +481,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

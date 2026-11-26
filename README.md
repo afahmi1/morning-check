@@ -1,5 +1,7 @@
 # DayBreak
 
+<img src="Shared/Assets.xcassets/DayBreakLogo.imageset/DayBreakLogo.png" width="112" height="112" alt="DayBreak logo: a golden scarab beneath an orange sun">
+
 An open-source iPhone and Apple Watch app that shows **where Apple's Sleep Score and how rested you feel agree, and where they don't**.
 
 ## Why this exists

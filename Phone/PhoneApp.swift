@@ -64,7 +64,7 @@ private struct MorningHome: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 HStack {
-                    Label("DayBreak", systemImage: "sun.horizon.fill")
+                    DayBreakBrand(iconSize: 25)
                         .font(.caption.monospaced().weight(.semibold)).foregroundStyle(ink)
                     Spacer()
                     Text(today).font(.caption.monospacedDigit()).foregroundStyle(.secondary)
