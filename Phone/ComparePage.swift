@@ -127,7 +127,7 @@ struct ComparePage: View {
         .chartXAxis {
             AxisMarks(values: typeSize.isAccessibilitySize ? [0, 50, 100] : [0, 25, 50, 75, 100]) { value in
                 AxisGridLine().foregroundStyle(palette.rule)
-                AxisValueLabel(collisionResolution: .disabled) {
+                AxisValueLabel(anchor: .top, collisionResolution: .disabled) {
                     if let v = value.as(Int.self) {
                         Text("\(v)").fixedSize().font(Thermocline.Font.mono(11, relativeTo: .caption2)).foregroundStyle(palette.muted)
                     }
