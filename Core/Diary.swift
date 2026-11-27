@@ -78,6 +78,7 @@ public struct Morning: Codable, Equatable, Identifiable, Sendable {
     public fileprivate(set) var rating: Rating?
     public fileprivate(set) var score: Score?
     public fileprivate(set) var candidate: Score?
+    public fileprivate(set) var wakeStage: WakeStage?
 }
 
 public struct Diary: Codable, Equatable, Sendable {
@@ -98,6 +99,16 @@ public struct Diary: Codable, Equatable, Sendable {
             else { return false }
         }
         row.rating = rating
+        row.wakeStage = nil
+        byDay[row.id] = row
+        return true
+    }
+
+    @discardableResult
+    public mutating func attach(_ wakeStage: WakeStage, to rating: Rating) -> Bool {
+        guard wakeStage.matches(rating), var row = byDay[rating.wakeDay], row.rating == rating,
+              row.wakeStage != wakeStage else { return false }
+        row.wakeStage = wakeStage
         byDay[row.id] = row
         return true
     }
@@ -106,7 +117,7 @@ public struct Diary: Codable, Equatable, Sendable {
     public mutating func stage(_ candidate: Score, on day: String) -> Bool {
         guard candidate.isValid, candidate.source == .notification else { return false }
         var row = byDay[day] ?? Morning(id: day)
-        guard row.score == nil else { return false }
+        guard row.score == nil, row.candidate == nil else { return false }
         row.candidate = candidate
         byDay[day] = row
         return true

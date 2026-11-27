@@ -3,7 +3,7 @@ import Foundation
 
 struct MorningCheckFromAlert: AppIntent {
     static let title: LocalizedStringResource = "Check In from Apple Sleep Alert"
-    static let description = IntentDescription("Asks for a morning rating. Optionally stages a Sleep Score parsed from the text you pass in. The score stays hidden until you rate and isn't saved as confirmed until you review it.")
+    static let description = IntentDescription("Requests a morning check-in if iPhone alert prompts are enabled. If you pass the original alert text and receipt time, it can also prepare a score for review after rating. It does not read Apple's Sleep Score from Health.")
     static let openAppWhenRun = false
 
     @Parameter(title: "Sleep Score notification text") var notificationText: String?

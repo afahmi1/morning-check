@@ -12,12 +12,17 @@ final class CoreTests: XCTestCase {
     func testTextRequiresUnambiguousSleepScoreContext() {
         for boundary in [0, 100] {
             XCTAssertEqual(ScoreText.candidate("Sleep Score: \(boundary)"), boundary)
+            XCTAssertEqual(ScoreText.candidate("Sleep Score: \(boundary)/100"), boundary)
             XCTAssertEqual(ScoreText.candidate("Sleep Score\n\(boundary)/100"), boundary)
             XCTAssertEqual(ScoreText.candidate("Your sleep score was \(boundary)/100."), boundary)
             XCTAssertEqual(ScoreText.candidate("Your sleep score is \(boundary)."), boundary)
+            XCTAssertEqual(ScoreText.candidate("Apple Sleep Score: \(boundary) points"), boundary)
         }
         for bad in ["Steps: 100/100", "Sleep Score: 101", "Sleep Score: 0.5", "Sleep Score: -1",
-                    "Sleep Score: 12:00", "Sleep Score: 50/50", "Sleep Score 7 h", "Sleep Score: 0\nSleep Score: 100"] {
+                    "Sleep Score: 12:00", "Sleep Score: 50/50", "Sleep Score 7 h", "Sleep Score: 0\nSleep Score: 100",
+                    "Sleep Score\nTime asleep\n8", "Sleep Score unavailable; battery 80/100", "Sleep Score: 40/100.5",
+                    "Sleep Score 85–90", "Sleep Score 85⁄200", "Sleep Score: 85 — 90", "Sleep Score 8 Sep",
+                    "Sleep Score 7 hrs", "Sleep Score 85 percent", "Sleep Score: 85; Sleep Score: 90", "Not a Sleep Score: 85"] {
             XCTAssertNil(ScoreText.candidate(bad), bad)
         }
     }

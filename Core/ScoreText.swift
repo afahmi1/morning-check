@@ -1,10 +1,12 @@
 import Foundation
 
 public enum ScoreText {
-    private static let label = #"\bsleep\s+score\b"#
-    private static let standalone = #"^([0-9]{1,3})\s*(?:/\s*100)?$"#
-    private static let inline = #"\bsleep\s+score\s*(?:is\s+|was\s+|of\s+)?[:=]?\s*([0-9]{1,3})(?![0-9A-Za-z:/%-]|[.,][0-9])(?!\s*(?:h\b|hours?\b|minutes?\b|mins?\b|%))(?:\s*/\s*100\b|(?!\s*/))"#
-    private static let fraction = #"(?<![\d.-])\b([0-9]{1,3})\s*/\s*100\b"#
+    private static let label = #"^(?:your\s+)?(?:apple(?:['’]s)?\s+)?sleep\s+score\b"#
+    private static let heading = label + #"\s*:?$"#
+    // Match the whole score field; do not take a valid-looking prefix of a range, fraction or date.
+    private static let value = #"([0-9]{1,3})(?:\s*/\s*100)?(?:\s+(?:points?|very\s+low|low|ok|high|very\s+high))?[.!]?"#
+    private static let standalone = "^" + value + "$"
+    private static let inline = label + #"\s*(?:(?:is|was|of)\b\s*)?[:=]?\s*"# + value + "$"
 
     public static func manual(_ raw: String) -> Int? {
         let s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -21,14 +23,14 @@ public enum ScoreText {
         var candidates = Set<Int>()
         for i in lines.indices where lines[i].range(of: label, options: [.regularExpression, .caseInsensitive]) != nil {
             let line = lines[i]
-            candidates.formUnion(matches(inline, line))
-            candidates.formUnion(matches(fraction, line))
-            // Apple’s detail card can place the score immediately below the label.
-            if line.range(of: #"^sleep\s+score\s*:?$"#, options: [.regularExpression, .caseInsensitive]) != nil {
-                for adjacent in lines.dropFirst(i + 1).prefix(2) {
-                    candidates.formUnion(matches(standalone, adjacent))
-                }
-            }
+            let direct = matches(inline, line)
+            if !direct.isEmpty { candidates.formUnion(direct); continue }
+            // Apple’s detail card can place the score immediately below a standalone heading.
+            guard line.range(of: heading, options: [.regularExpression, .caseInsensitive]) != nil,
+                  let adjacent = lines.dropFirst(i + 1).first else { return nil }
+            let separate = matches(standalone, adjacent)
+            guard !separate.isEmpty else { return nil }
+            candidates.formUnion(separate)
         }
         guard candidates.count == 1, let value = candidates.first, (0...100).contains(value) else { return nil }
         return value

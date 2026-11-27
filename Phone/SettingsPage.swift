@@ -1,3 +1,4 @@
+import MorningCheckCore
 import SwiftUI
 
 struct SettingsPresentation: View {
@@ -22,6 +23,7 @@ private struct SettingsPage: View {
                 VStack(alignment: .leading, spacing: 24) {
                     appearance
                     prompts
+                    stages
                     privacy
                 }
                 .foregroundStyle(palette.ink)
@@ -34,7 +36,7 @@ private struct SettingsPage: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
             .confirmationDialog("Erase the iPhone log?", isPresented: $showErase, titleVisibility: .visible) {
                 Button("Erase iPhone log", role: .destructive) { model.eraseDiary() }
-            } message: { Text("Deletes ratings and score entries here, not your Watch log or anything in Apple Health.") }
+            } message: { Text("Deletes ratings, scores and sleep stages here, not your Watch log or anything in Apple Health.") }
         }
     }
 
@@ -84,14 +86,57 @@ private struct SettingsPage: View {
                     }
                     .buttonStyle(.plain).disabled(busy)
                     .accessibilityAddTraits(model.mode == mode ? .isSelected : [])
+                    .accessibilityIdentifier("prompt-mode-\(mode.rawValue)")
                 }
             }
             .dayBreakPanel(palette)
-            Text("Sleep data mode waits for a recent Watch recording. It doesn’t detect waking in real time. Apple alert mode needs a separate iPhone Shortcut.")
+            Text("Watch sleep is a timing cue, not live wake detection. The iPhone alert needs a Shortcuts automation. Using both still sends at most one check-in per day.")
                 .font(.footnote).foregroundStyle(palette.muted)
             Button("Test Watch notification routing") { Task { await model.sendTestReminder() } }
                 .buttonStyle(DayBreakActionStyle(palette: palette, prominence: .secondary))
             if !model.promptStatus.isEmpty { Text(model.promptStatus).font(.footnote).foregroundStyle(palette.muted) }
+            if model.mode != .off { recentPromptChecks }
+        }
+    }
+
+    private var recentPromptChecks: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            DayBreakRule(palette: palette)
+            Text("Last prompt checks").font(.subheadline.weight(.semibold)).accessibilityAddTraits(.isHeader)
+            if model.promptChecksUnavailable {
+                Text("Saved checks couldn’t be read or written. DayBreak will retry.")
+                    .font(.footnote).foregroundStyle(palette.muted)
+            }
+            ForEach(PromptSource.allCases.filter { model.mode.accepts($0) }) { source in
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(source == .watchSleep ? "Watch sleep" : "iPhone alert").font(.footnote.weight(.semibold))
+                    if let check = model.promptChecks[source] {
+                        Text(check.outcome.description)
+                        Text(check.checkedAt, format: .dateTime.month(.abbreviated).day().hour().minute())
+                            .monospacedDigit()
+                    } else if !model.promptChecksUnavailable {
+                        Text("No signal recorded yet.")
+                    }
+                }
+                .font(.footnote).foregroundStyle(palette.muted)
+            }
+        }
+    }
+
+    private var stages: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            DayBreakRule(palette: palette)
+            Toggle("Log sleep stages", isOn: Binding(get: { model.wakeStagesEnabled }, set: { enabled in
+                Task { await model.changeWakeStageLogging(to: enabled) }
+            }))
+            .font(.body.weight(.semibold)).frame(minHeight: 44)
+            .disabled(model.stageAccessInProgress)
+            .accessibilityIdentifier("log-wake-stage-setting")
+            Text("Read Apple Watch sleep stages for your rated mornings. This doesn’t turn on reminders. Turning it off keeps stages you’ve already logged.")
+                .font(.footnote).foregroundStyle(palette.muted)
+            if let message = model.stageAccessMessage {
+                Text(message).font(.footnote).foregroundStyle(palette.muted)
+            }
         }
     }
 

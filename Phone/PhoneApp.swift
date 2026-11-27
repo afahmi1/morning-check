@@ -15,7 +15,7 @@ struct MorningCheckApp: App {
                 .onChange(of: scenePhase, initial: true) { _, phase in
                     if phase == .active {
                         model.syncAppearance()
-                        Task { await model.evaluateSleep() }
+                        Task { await model.refreshHealthData() }
                     }
                 }
         }
@@ -27,6 +27,12 @@ final class LaunchDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         PhoneModel.shared.start()
         return true
+    }
+
+    func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
+        // This retries a locked Health read if iOS is already letting the app run.
+        // It does not wake DayBreak when iOS has suspended or force-quit it.
+        Task { await PhoneModel.shared.refreshHealthData() }
     }
 }
 
@@ -69,8 +75,9 @@ private struct MorningHome: View {
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { day in
                 ScrollView {
-                    ScorePanel(model: model, day: day).padding(.vertical, 20).dayBreakPhoneGutter()
+                    morningDetails(day).padding(.vertical, 20).dayBreakPhoneGutter()
                 }
+                .task(id: model.disk.diary[day]?.rating?.id) { await model.refreshWakeStage(on: day) }
                 .scrollDismissesKeyboard(.interactively)
                 .background(palette.canvas.ignoresSafeArea())
                 .navigationTitle(day).navigationBarTitleDisplayMode(.inline)
@@ -87,6 +94,7 @@ private struct MorningHome: View {
             page = .checkIn
         }
         .onChange(of: phase) { _, state in if state == .active { now = .now } }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in now = .now }
     }
 
     private var header: some View {
@@ -145,7 +153,7 @@ private struct MorningHome: View {
                     }
                 }
                 if model.disk.diary[day]?.rating != nil {
-                    ScorePanel(model: model, day: day, active: page == .checkIn).id(day)
+                    morningDetails(day, active: page == .checkIn).id(day)
                 } else {
                     ratings
                 }
@@ -160,6 +168,13 @@ private struct MorningHome: View {
             .padding(.vertical, 20).dayBreakPhoneGutter()
         }
         .scrollDismissesKeyboard(.interactively)
+    }
+
+    private func morningDetails(_ day: String, active: Bool = true) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            ScorePanel(model: model, day: day, active: active)
+            WakeStagePanel(model: model, day: day)
+        }
     }
 
     private var ratings: some View {

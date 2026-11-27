@@ -5,8 +5,12 @@ struct LocalFile<Value: Codable> {
 
     func load() throws -> Value? {
         let url = try location()
-        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
-        return try JSONDecoder().decode(Value.self, from: Data(contentsOf: url))
+        let data: Data
+        do { data = try Data(contentsOf: url) }
+        catch let error as CocoaError where error.code == .fileReadNoSuchFile || error.code == .fileNoSuchFile {
+            return nil
+        }
+        return try JSONDecoder().decode(Value.self, from: data)
     }
 
     func save(_ value: Value) throws {

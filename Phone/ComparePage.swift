@@ -18,17 +18,18 @@ struct ComparePage: View {
         let all = model.disk.diary.rows
         let rows = all.filter { $0.rating != nil }
         let summary = Comparison(rows: all)
+        let stages = WakeStageComparison(rows: rows)
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Compare your mornings").font(palette.displayFont).accessibilityAddTraits(.isHeader)
-                    Text("See where Apple’s score and how rested you felt agree, and where they don’t.")
+                    Text("Compare how rested you felt with Apple’s Sleep Score and your last recorded sleep stage.")
                         .foregroundStyle(palette.muted)
                 }
                 coverage(summary, rows: rows)
                 if summary.pairs.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("No mornings paired yet", systemImage: "chart.dots.scatter").font(.headline)
+                        Label("No Sleep Scores paired yet", systemImage: "chart.dots.scatter").font(.headline)
                         Text("Record your restedness on waking, then add Apple’s Sleep Score for the same date.")
                             .font(.subheadline).foregroundStyle(palette.muted)
                     }
@@ -36,7 +37,10 @@ struct ComparePage: View {
                 } else {
                     results(summary)
                 }
-                if !rows.isEmpty { history(rows) }
+                if !rows.isEmpty {
+                    stageResults(stages)
+                    history(rows)
+                }
             }
             .foregroundStyle(palette.ink)
             .padding(.vertical, 20).dayBreakPhoneGutter()
@@ -46,7 +50,7 @@ struct ComparePage: View {
 
     private func coverage(_ summary: Comparison, rows: [Morning]) -> some View {
         let count = summary.pairs.count
-        let paired = count == 1 ? "paired morning" : "paired mornings"
+        let paired = count == 1 ? "morning with a score" : "mornings with a score"
         let missing = summary.noScore == 1 ? "rating without a score" : "ratings without a score"
         let layout = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12)) : AnyLayout(HStackLayout(alignment: .top, spacing: 16))
         return VStack(alignment: .leading, spacing: 8) {
@@ -143,6 +147,42 @@ struct ComparePage: View {
         .frame(height: typeSize.isAccessibilitySize ? 270 : 188)
     }
 
+    private func stageResults(_ summary: WakeStageComparison) -> some View {
+        let format = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1))
+        return VStack(alignment: .leading, spacing: 10) {
+            Text("Restedness by last sleep stage").font(palette.sectionFont).accessibilityAddTraits(.isHeader)
+            Text("\(summary.matched) with a stage · \(summary.missing) missing")
+                .font(.subheadline.monospacedDigit()).foregroundStyle(palette.muted)
+                .accessibilityIdentifier("wake-stage-coverage")
+            if summary.groups.isEmpty {
+                Text(model.wakeStagesEnabled
+                     ? "No matching Apple Watch stages yet. Check Sleep access in Health and try again after your Watch syncs."
+                     : "Enable sleep stage logging to pair Apple Watch sleep stages with your check-ins.")
+                    .font(.footnote).foregroundStyle(palette.muted)
+            } else {
+                ForEach(summary.groups) { group in
+                    DayBreakRule(palette: palette)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(group.stage.label).font(palette.choiceFont).foregroundStyle(palette.accent)
+                        Text("Median restedness: \(group.medianRestedness.formatted(format)) / 5 (\(group.count))")
+                            .font(.subheadline.monospacedDigit())
+                        if let score = group.medianScore {
+                            Text("Median Sleep Score: \(score.formatted(format)) / 100 (\(group.scoreCount))")
+                                .font(.footnote.monospacedDigit()).foregroundStyle(palette.muted)
+                        } else {
+                            Text("No confirmed Sleep Scores").font(.footnote).foregroundStyle(palette.muted)
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("wake-stage-group-\(group.stage.rawValue)")
+                }
+                Text("Counts are mornings with that measure. Small groups can vary a lot; this doesn’t tell you what caused a rating.")
+                    .font(.footnote).foregroundStyle(palette.muted)
+            }
+        }
+        .padding(16).frame(maxWidth: .infinity, alignment: .leading).dayBreakPanel(palette)
+    }
+
     private func history(_ rows: [Morning]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Morning history").font(palette.sectionFont).accessibilityAddTraits(.isHeader)
@@ -155,6 +195,9 @@ struct ComparePage: View {
                                 Text(row.id).font(.body.monospacedDigit().weight(.semibold)).foregroundStyle(palette.ink)
                                 if let rating = row.rating {
                                     Text("Restedness \(rating.value.rawValue) / 5").font(.footnote).foregroundStyle(palette.muted)
+                                    if let wake = row.wakeStage, wake.matches(rating) {
+                                        Text("Last stage: \(wake.stage.label)").font(.footnote).foregroundStyle(palette.muted)
+                                    }
                                 }
                             }
                             Spacer(minLength: 4)

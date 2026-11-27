@@ -7,7 +7,7 @@ settings:
   base:
     SWIFT_VERSION: '5.0'
     MARKETING_VERSION: '0.1.0'
-    CURRENT_PROJECT_VERSION: '7'
+    CURRENT_PROJECT_VERSION: '9'
     ENABLE_USER_SCRIPT_SANDBOXING: YES
 packages:
   MorningCheckCore:
@@ -40,7 +40,7 @@ targets:
         CFBundleName: DayBreak
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
-        NSHealthShareUsageDescription: DayBreak reads estimated sleep intervals to nudge you when the Watch's overnight data arrives. It does not write to Health or send this data to a server.
+        NSHealthShareUsageDescription: DayBreak reads Apple Watch sleep stages to log the last recorded stage with your rating and to time optional check-ins. It does not write to Health or send this data to a server.
   MorningCheckWatch:
     type: application
     platform: watchOS
