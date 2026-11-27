@@ -33,7 +33,7 @@ struct ScorePanel: View {
                         .font(.subheadline.weight(.medium)).foregroundStyle(palette.destructive)
                         .frame(minHeight: 44, alignment: .leading)
                 } else {
-                    Text("Add the exact value Apple showed for \(day).")
+                    Text("Apple Health doesn’t share the exact score with DayBreak. Enter the score for \(day), or read it from a screenshot.")
                         .font(.subheadline).foregroundStyle(palette.muted)
                     if let candidate = proposed ?? row?.candidate {
                         suggestion(candidate)
@@ -89,7 +89,9 @@ struct ScorePanel: View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Detected \(candidate.value) / 100", systemImage: "checkmark.magnifyingglass")
                 .font(palette.choiceFont).foregroundStyle(palette.accent)
-            Text("Check the number and date against Apple Health before saving.")
+            Text(candidate.source == .notification
+                 ? "Read from an iPhone alert, not Apple Health. Confirm the number and wake date in Health."
+                 : "Check the number and wake date against Apple Health before saving.")
                 .font(.footnote).foregroundStyle(palette.muted)
             actionLayout {
                 Button("Confirm \(candidate.value)") { confirm(candidate) }

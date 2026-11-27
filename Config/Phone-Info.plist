@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>DayBreak reads estimated sleep intervals to nudge you when the Watch's overnight data arrives. It does not write to Health or send this data to a server.</string>
+	<string>DayBreak reads Apple Watch sleep stages to log the last recorded stage with your rating and to time optional check-ins. It does not write to Health or send this data to a server.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 </dict>

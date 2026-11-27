@@ -22,15 +22,48 @@ final class MorningCheckUITests: XCTestCase {
         app.buttons["workspace-compare"].tap()
         let paired = app.descendants(matching: .any)["pair-count"].firstMatch
         XCTAssertTrue(paired.waitForExistence(timeout: 5))
-        XCTAssertEqual(paired.label, "1 paired morning")
+        XCTAssertEqual(paired.label, "1 morning with a score")
         app.swipeUp()
         XCTAssertTrue(app.staticTexts["1 of 1 high-score mornings felt only slightly rested or worse."].exists)
 
         let historyEntry = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "morning-history-")).firstMatch
-        if !historyEntry.isHittable { app.swipeUp() }
+        reveal(historyEntry, in: app)
         XCTAssertTrue(historyEntry.isHittable)
         historyEntry.tap()
         XCTAssertTrue(app.staticTexts["confirmed-apple-score"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testLastWatchStageAppearsAfterRatingAndComparesWithoutAScore() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-isolated-ui-test", "-wake-stage-test-fixture"]
+        app.launch()
+        let action = app.buttons["phone-rating-3"]
+        let stage = app.staticTexts["logged-wake-stage"]
+        XCTAssertTrue(action.waitForExistence(timeout: 5))
+        XCTAssertFalse(stage.exists)
+        action.tap()
+        reveal(stage, in: app)
+        XCTAssertTrue(stage.waitForExistence(timeout: 5))
+        XCTAssertEqual(stage.label, "REM")
+        XCTAssertFalse(app.staticTexts["confirmed-apple-score"].exists)
+        capture("Stage after rating (isolated test fixture)")
+
+        app.buttons["workspace-compare"].tap()
+        let group = app.descendants(matching: .any)["wake-stage-group-rem"].firstMatch
+        reveal(group, in: app)
+        XCTAssertTrue(group.waitForExistence(timeout: 5))
+        XCTAssertTrue(group.label.contains("Median restedness: 3 / 5 (1)"), group.label)
+        XCTAssertTrue(group.label.contains("No confirmed Sleep Scores"), group.label)
+        capture("Stage comparison (isolated test fixture)")
+
+        let history = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "morning-history-")).firstMatch
+        reveal(history, in: app)
+        XCTAssertTrue(history.isHittable)
+        XCTAssertTrue(history.label.contains("Last stage: REM"), history.label)
+        history.tap()
+        reveal(stage, in: app)
+        XCTAssertTrue(stage.isHittable)
     }
 
     @MainActor
@@ -92,10 +125,26 @@ final class MorningCheckUITests: XCTestCase {
         app.buttons["Settings"].tap()
 
         let footer = app.staticTexts["daybreak-version"]
-        if !footer.isHittable { app.swipeUp() }
+        reveal(footer, in: app)
         guard footer.isHittable else { return XCTFail("Settings version footer is not visible") }
         XCTAssertTrue(footer.label.range(of: #"^DayBreak version [0-9]+(?:\.[0-9]+)+, build [0-9]+(?:\.[0-9]+)*$"#,
                                          options: .regularExpression) != nil, footer.label)
+    }
+
+    @MainActor
+    func testPromptSettingsOfferEitherTrigger() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-isolated-ui-test"]
+        app.launch()
+        app.buttons["Settings"].tap()
+        XCTAssertTrue(app.staticTexts["Prompt source"].waitForExistence(timeout: 5))
+        let option = app.buttons["prompt-mode-either"]
+        XCTAssertTrue(option.waitForExistence(timeout: 3))
+        XCTAssertEqual(option.label, "Watch sleep or iPhone alert")
+        let stages = app.switches["log-wake-stage-setting"]
+        reveal(stages, in: app)
+        XCTAssertTrue(stages.isHittable)
+        XCTAssertEqual(stages.value as? String, "0")
     }
 
     @MainActor
@@ -113,5 +162,18 @@ final class MorningCheckUITests: XCTestCase {
         app.buttons["workspace-checkIn"].tap()
         XCTAssertTrue(app.staticTexts["How rested do you feel?"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.textFields["apple-score-field"].exists)
+    }
+
+    @MainActor
+    private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
+        for _ in 0..<4 where !element.isHittable { app.swipeUp() }
+    }
+
+    @MainActor
+    private func capture(_ name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
     }
 }
