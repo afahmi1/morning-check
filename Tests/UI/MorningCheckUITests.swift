@@ -85,6 +85,20 @@ final class MorningCheckUITests: XCTestCase {
     }
 
     @MainActor
+    func testSettingsFooterIdentifiesInstalledVersionAndBuild() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-isolated-ui-test"]
+        app.launch()
+        app.buttons["Settings"].tap()
+
+        let footer = app.staticTexts["daybreak-version"]
+        if !footer.isHittable { app.swipeUp() }
+        guard footer.isHittable else { return XCTFail("Settings version footer is not visible") }
+        XCTAssertTrue(footer.label.range(of: #"^DayBreak version [0-9]+(?:\.[0-9]+)+, build [0-9]+(?:\.[0-9]+)*$"#,
+                                         options: .regularExpression) != nil, footer.label)
+    }
+
+    @MainActor
     func testWorkspaceNavigationAndSettings() {
         let app = XCUIApplication()
         app.launchArguments = ["-isolated-ui-test"]
