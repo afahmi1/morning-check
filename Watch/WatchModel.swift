@@ -12,6 +12,7 @@ struct WatchDisk: Codable {
 final class WatchModel: NSObject, ObservableObject {
     static let shared = WatchModel()
     @Published private(set) var disk = WatchDisk()
+    @Published private(set) var appearance = DayBreakAppearance.load(from: .standard)
     @Published private(set) var error: String?
     private let file = LocalFile<WatchDisk>(name: "watch.json")
     private var canWrite = true
@@ -82,6 +83,13 @@ final class WatchModel: NSObject, ObservableObject {
         #endif
     }
 
+    private func syncAppearance() {
+        let context = WCSession.default.receivedApplicationContext
+        guard let next = DayBreakAppearance(payload: context[PeerKey.appearance]), next != appearance else { return }
+        appearance = next
+        next.save(to: .standard)
+    }
+
     private func acknowledge(_ id: UUID) {
         guard disk.diary.rows.contains(where: { $0.rating?.id == id }), !disk.acknowledged.contains(id) else { return }
         var next = disk
@@ -98,7 +106,16 @@ final class WatchModel: NSObject, ObservableObject {
 
 extension WatchModel: WCSessionDelegate {
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        if activationState == .activated { Task { @MainActor in sendPending() } }
+        if activationState == .activated {
+            Task { @MainActor in
+                syncAppearance()
+                sendPending()
+            }
+        }
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        Task { @MainActor in syncAppearance() }
     }
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {

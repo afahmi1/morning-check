@@ -34,6 +34,57 @@ final class MorningCheckUITests: XCTestCase {
     }
 
     @MainActor
+    func testAppearanceSelectionAndPersistence() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-isolated-ui-test"]
+        app.launchEnvironment["DAYBREAK_TEST_APPEARANCE_SUITE"] = "daybreak-tests-\(UUID().uuidString)"
+        app.launch()
+        app.buttons["Settings"].tap()
+        let row = app.buttons["appearance-settings"]
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        XCTAssertEqual(row.value as? String, "Thermocline · Crown · System")
+        row.tap()
+
+        let classic = app.buttons["theme-paperAsh"]
+        let thermocline = app.buttons["theme-thermocline"]
+        let dark = app.buttons["mode-dark"]
+        let light = app.buttons["mode-light"]
+        let system = app.buttons["mode-system"]
+        let plum = app.buttons["accent-plum"]
+        XCTAssertTrue(thermocline.waitForExistence(timeout: 5))
+        XCTAssertTrue(thermocline.isSelected)
+        XCTAssertTrue(system.isSelected)
+        XCTAssertTrue(app.buttons["accent-crown"].isSelected)
+        XCTAssertEqual(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "accent-")).count, 7)
+
+        plum.tap()
+        XCTAssertTrue(plum.isSelected)
+        classic.tap()
+        XCTAssertTrue(classic.isSelected)
+        XCTAssertFalse(plum.exists)
+        light.tap()
+        XCTAssertTrue(light.isSelected)
+        XCTAssertTrue(app.staticTexts["Fixed to Paper’s original burnt orange."].exists)
+        dark.tap()
+        XCTAssertTrue(dark.isSelected)
+        XCTAssertTrue(app.staticTexts["Fixed to Ash’s original violet."].exists)
+        thermocline.tap()
+        XCTAssertTrue(plum.isSelected)
+        app.navigationBars["Appearance"].buttons.firstMatch.tap()
+        XCTAssertEqual(row.value as? String, "Thermocline · Plum · Dark")
+
+        app.terminate()
+        app.launch()
+        app.buttons["Settings"].tap()
+        XCTAssertEqual(row.value as? String, "Thermocline · Plum · Dark")
+        row.tap()
+        XCTAssertTrue(plum.isSelected)
+        XCTAssertTrue(dark.isSelected)
+        system.tap()
+        XCTAssertTrue(system.isSelected)
+    }
+
+    @MainActor
     func testWorkspaceNavigationAndSettings() {
         let app = XCUIApplication()
         app.launchArguments = ["-isolated-ui-test"]

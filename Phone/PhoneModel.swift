@@ -28,11 +28,13 @@ final class PhoneModel: NSObject, ObservableObject {
     static let shared = PhoneModel()
     @Published private(set) var disk = PhoneDisk()
     @Published private(set) var mode: PromptMode
+    @Published private(set) var appearance: DayBreakAppearance
     @Published private(set) var promptStatus = ""
     @Published private(set) var storageError: String?
     @Published private(set) var showCheckIn = 0
 
     private let file: LocalFile<PhoneDisk>?
+    private let appearanceDefaults: UserDefaults?
     private let signal = SleepSignal()
     private var started = false
     private var busyDays = Set<String>()
@@ -42,10 +44,15 @@ final class PhoneModel: NSObject, ObservableObject {
     override private init() {
         #if DEBUG
         let isolated = ProcessInfo.processInfo.arguments.contains("-isolated-ui-test")
+        let testDefaults = ProcessInfo.processInfo.environment["DAYBREAK_TEST_APPEARANCE_SUITE"]
+            .flatMap(UserDefaults.init(suiteName:))
         #else
         let isolated = false
+        let testDefaults: UserDefaults? = nil
         #endif
         file = isolated ? nil : LocalFile(name: "phone.json")
+        appearanceDefaults = isolated ? testDefaults : .standard
+        appearance = DayBreakAppearance.load(from: appearanceDefaults)
         mode = isolated ? .off : PromptMode(rawValue: UserDefaults.standard.string(forKey: "morningPromptMode") ?? "") ?? .off
         super.init()
     }
@@ -55,6 +62,21 @@ final class PhoneModel: NSObject, ObservableObject {
         started = true
         do { disk = try file?.load() ?? PhoneDisk() }
         catch { mayWrite = false; storageError = "The log couldn’t open. Existing data was not overwritten." }
+        #if DEBUG
+        if file == nil, ProcessInfo.processInfo.arguments.contains("-appearance-review-fixture") {
+            let examples: [(Restedness, Int?)] = [(.slightly, 100), (.notAtAll, 94), (.somewhat, 52), (.veryWell, 72), (.well, nil)]
+            var fixture = PhoneDisk()
+            for (offset, sample) in examples.enumerated() {
+                let date = Date(timeIntervalSince1970: 1_784_640_000 + Double(offset * 86_400))
+                let rating = Rating(sample.0, at: date, source: .phone)
+                fixture.diary.record(rating)
+                if let value = sample.1, let score = Score(value, source: .manual) {
+                    fixture.diary.confirm(score, on: rating.wakeDay)
+                }
+            }
+            disk = fixture
+        }
+        #endif
         guard file != nil else { return }
         let center = UNUserNotificationCenter.current()
         center.delegate = self
@@ -64,6 +86,24 @@ final class PhoneModel: NSObject, ObservableObject {
             WCSession.default.activate()
         }
         if mode == .sleepData { observe() }
+    }
+
+    func changeAppearance(to next: DayBreakAppearance) {
+        guard next != appearance else { return }
+        appearance = next
+        next.save(to: appearanceDefaults)
+        syncAppearance()
+    }
+
+    func syncAppearance() {
+        guard file != nil, WCSession.isSupported() else { return }
+        let session = WCSession.default
+        guard session.activationState == .activated else { return }
+        var context = session.applicationContext
+        context[PeerKey.appearance] = appearance.payload
+        // This is the latest state, not an event. WatchConnectivity queues it for an offline Watch.
+        // If unavailable, retry on activation, Watch state change or next foreground.
+        try? session.updateApplicationContext(context)
     }
 
     func changePromptMode(to next: PromptMode) async {
@@ -253,7 +293,13 @@ extension PhoneModel: UNUserNotificationCenterDelegate {
 }
 
 extension PhoneModel: WCSessionDelegate {
-    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {}
+    nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if activationState == .activated { Task { @MainActor in syncAppearance() } }
+    }
+
+    nonisolated func sessionWatchStateDidChange(_ session: WCSession) {
+        Task { @MainActor in syncAppearance() }
+    }
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {}
     nonisolated func sessionDidDeactivate(_ session: WCSession) { session.activate() }
 

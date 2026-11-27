@@ -11,8 +11,12 @@ struct MorningCheckApp: App {
     var body: some Scene {
         WindowGroup {
             MorningHome(model: model)
+                .dayBreakAppearance(model.appearance)
                 .onChange(of: scenePhase, initial: true) { _, phase in
-                    if phase == .active { Task { await model.evaluateSleep() } }
+                    if phase == .active {
+                        model.syncAppearance()
+                        Task { await model.evaluateSleep() }
+                    }
                 }
         }
     }
@@ -34,7 +38,7 @@ private struct MorningHome: View {
     }
 
     @ObservedObject var model: PhoneModel
-    @Environment(\.colorScheme) private var scheme
+    @Environment(\.dayBreakPalette) private var palette
     @Environment(\.scenePhase) private var phase
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var page: Workspace = .checkIn
@@ -43,7 +47,6 @@ private struct MorningHome: View {
     @State private var now = Date.now
 
     private var day: String { WakeDay.key(now) }
-    private var palette: DayBreakPalette { DayBreakPalette(scheme) }
 
     var body: some View {
         NavigationStack(path: $historyPath) {
@@ -76,8 +79,7 @@ private struct MorningHome: View {
                 .toolbarBackground(.visible, for: .navigationBar)
             }
         }
-        .tint(palette.accent)
-        .sheet(isPresented: $settings) { SettingsPage(model: model) }
+        .sheet(isPresented: $settings) { SettingsPresentation(model: model) }
         .onChange(of: model.showCheckIn) { _, _ in
             historyPath.removeAll()
             settings = false
@@ -91,7 +93,7 @@ private struct MorningHome: View {
         let layout = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 3)) : AnyLayout(HStackLayout(spacing: 3))
         return VStack(spacing: 8) {
             HStack(spacing: 10) {
-                DayBreakBrand(iconSize: 32).font(.dayBreakSection).foregroundStyle(palette.ink)
+                DayBreakBrand(iconSize: 32).font(palette.sectionFont).foregroundStyle(palette.ink)
                 Spacer(minLength: 0)
                 Button { settings = true } label: {
                     Image(systemName: "gearshape").font(.system(size: 19, weight: .medium))
@@ -107,7 +109,8 @@ private struct MorningHome: View {
                             .foregroundStyle(selected ? palette.accent : palette.muted)
                             .padding(.horizontal, 10).padding(.vertical, 8)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(selected ? palette.selection : .clear, in: RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
+                            .background(selected ? palette.selection : .clear,
+                                        in: RoundedRectangle(cornerRadius: palette.workspaceRadius, style: .continuous))
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -131,12 +134,12 @@ private struct MorningHome: View {
                             .font(.subheadline.weight(.medium)).foregroundStyle(palette.muted)
                     }
                     if let rating = model.disk.diary[day]?.rating {
-                        Text("Rating saved").font(.dayBreakDisplay).accessibilityAddTraits(.isHeader)
-                        Text("\(rating.value.rawValue) / 5").font(.dayBreakNumberSection)
+                        Text("Rating saved").font(palette.displayFont).accessibilityAddTraits(.isHeader)
+                        Text("\(rating.value.rawValue) / 5").font(palette.numberSectionFont)
                             .foregroundStyle(palette.accent).accessibilityLabel("\(rating.value.rawValue) of 5")
                         Text(rating.value.label).foregroundStyle(palette.muted)
                     } else {
-                        Text("How rested do you feel?").font(.dayBreakDisplay).accessibilityAddTraits(.isHeader)
+                        Text("How rested do you feel?").font(palette.displayFont).accessibilityAddTraits(.isHeader)
                         Text("Rate how you felt on waking, before opening Apple’s Sleep Score.")
                             .foregroundStyle(palette.muted)
                     }
@@ -165,7 +168,7 @@ private struct MorningHome: View {
                 if value != .notAtAll { DayBreakRule(palette: palette).padding(.horizontal, 14) }
                 Button { _ = model.recordPhoneRating(value) } label: {
                     HStack(spacing: 12) {
-                        Text("\(value.rawValue)").font(.dayBreakChoice)
+                        Text("\(value.rawValue)").font(palette.choiceFont)
                             .foregroundStyle(palette.accent)
                             .frame(minWidth: 26, alignment: .leading)
                         Text(value.label).font(.body.weight(.medium)).foregroundStyle(palette.ink)
