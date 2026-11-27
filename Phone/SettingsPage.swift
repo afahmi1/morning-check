@@ -96,13 +96,31 @@ private struct SettingsPage: View {
     }
 
     private var privacy: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let stackFooter = typeSize >= .xxxLarge
+        let footerLayout = stackFooter
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+            : AnyLayout(HStackLayout(spacing: 8))
+        return VStack(alignment: .leading, spacing: 12) {
             DayBreakRule(palette: palette)
             Text("Privacy").font(palette.sectionFont).accessibilityAddTraits(.isHeader)
             Text("No account, server or iCloud storage. Ratings go from your Watch to its paired iPhone. Sleep permission is read-only. Selected screenshots are read on device; DayBreak doesn’t keep the image.")
                 .font(.subheadline).foregroundStyle(palette.muted)
-            Button("Erase iPhone log", role: .destructive) { showErase = true }
-                .foregroundStyle(palette.destructive).frame(minHeight: 44)
+            footerLayout {
+                Button("Erase iPhone log", role: .destructive) { showErase = true }
+                    .foregroundStyle(palette.destructive).frame(minHeight: 44)
+                versionFooter.frame(maxWidth: .infinity, alignment: stackFooter ? .leading : .trailing)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var versionFooter: some View {
+        if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+           let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
+            Text("Version \(version) · Build \(build)")
+                .font(.caption.monospacedDigit()).foregroundStyle(palette.muted)
+                .accessibilityLabel("DayBreak version \(version), build \(build)")
+                .accessibilityIdentifier("daybreak-version")
         }
     }
 }

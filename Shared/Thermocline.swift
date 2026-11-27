@@ -25,9 +25,11 @@ public enum Thermocline {
                 return Color(red: c.r, green: c.g, blue: c.b)
             }
         }
-        public static let bgToken = Token(light: 0xE4E0D7, dark: 0x13181D)
-        public static let surface1Token = Token(light: 0xEEEAE1, dark: 0x1A2026)
-        public static let surface2Token = Token(light: 0xF5F1E7, dark: 0x22272B)
+        /// Achromatic OLED canvas in dark mode, distinct from the measured on-accent ink.
+        public static let bgToken = Token(light: 0xE4E0D7, dark: 0x000000)
+        public static let surface1Token = Token(light: 0xEEEAE1, dark: 0x151515)
+        public static let surface2Token = Token(light: 0xF5F1E7, dark: 0x222222)
+        public static let surface3Token = Token(light: 0xDCD8CF, dark: 0x2D2D2D)
         public static let textToken = Token(light: 0x13181D, dark: 0xEBE7DE)
         public static let text3Token = Token(light: 0x645C64, dark: 0x9D959D)
         /// Text on any accent fill.
@@ -59,7 +61,7 @@ public enum Thermocline {
     public static let bg         = Palette.bgToken.color
     public static let surface1   = Palette.surface1Token.color
     public static let surface2   = Palette.surface2Token.color
-    public static let surface3   = Palette.make(light: 0xDCD8CF, dark: 0x2A3036)
+    public static let surface3   = Palette.surface3Token.color
     public static let text       = Palette.textToken.color
     public static let text2      = Palette.make(light: 0x474047, dark: 0xB5AEA5)
     public static let text3      = Palette.text3Token.color
@@ -206,18 +208,23 @@ public extension EnvironmentValues {
 public struct ThermoclineGlass: ViewModifier {
     var radius: CGFloat
     var thin: Bool
+    @Environment(\.colorScheme) private var scheme
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     public func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+        let surface = Thermocline.Palette.surface1Token.color(for: scheme)
+        let text = Thermocline.Palette.textToken.color(for: scheme)
         if reduceTransparency {
             // Reduce Transparency: solid surface plus hairline, no material.
             content
-                .background(Thermocline.surface1, in: shape)
-                .overlay(shape.strokeBorder(Thermocline.lineStrong, lineWidth: 1))
+                .background(surface, in: shape)
+                .overlay(shape.strokeBorder(text.opacity(0.18), lineWidth: 1))
         } else {
             content
+                // Neutral lift is contained within the card, not the OLED canvas.
+                .background(surface.opacity(scheme == .dark ? 0.86 : 0), in: shape)
                 .background(thin ? AnyShapeStyle(.ultraThinMaterial) : AnyShapeStyle(.regularMaterial), in: shape)
-                .overlay(shape.strokeBorder(Thermocline.text.opacity(0.12), lineWidth: 1))
+                .overlay(shape.strokeBorder(text.opacity(0.12), lineWidth: 1))
         }
     }
 }
