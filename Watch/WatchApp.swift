@@ -12,7 +12,9 @@ struct MorningCheckWatchApp: App {
     }
 
     var body: some Scene {
-        WindowGroup { WatchCheckIn(model: model) }
+        WindowGroup {
+            WatchCheckIn(model: model).dayBreakAppearance(model.appearance)
+        }
     }
 }
 
@@ -22,7 +24,7 @@ private struct WatchCheckIn: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var showErase = false
 
-    private let palette = DayBreakPalette(.dark)
+    @Environment(\.dayBreakPalette) private var palette
 
     var body: some View {
         NavigationStack {
@@ -49,7 +51,6 @@ private struct WatchCheckIn: View {
                 .padding(.horizontal, 4).padding(.bottom, 6)
             }
             .containerBackground(palette.canvas, for: .navigation)
-            .tint(palette.accent)
             .confirmationDialog("Erase Watch log?", isPresented: $showErase, titleVisibility: .visible) {
                 Button("Erase Watch log", role: .destructive) { model.eraseLocal() }
             } message: { Text("This does not erase a rating already received by your iPhone.") }
@@ -59,16 +60,16 @@ private struct WatchCheckIn: View {
 
     private var choices: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("How rested?").font(.dayBreakWristTitle).accessibilityAddTraits(.isHeader)
+            Text("How rested?").font(palette.wristTitleFont).accessibilityAddTraits(.isHeader)
             Text("Before Apple’s score.").font(.caption2).foregroundStyle(palette.muted)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 68 : 44), spacing: 4)], spacing: 4) {
                 ForEach(Restedness.allCases, id: \.rawValue) { value in
                     Button { model.record(value) } label: {
-                        Text("\(value.rawValue)").font(.dayBreakChoice)
+                        Text("\(value.rawValue)").font(palette.wristChoiceFont)
                             .foregroundStyle(palette.accent)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .dayBreakPanel(palette, radius: Thermocline.Radius.sm)
-                            .contentShape(RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
+                            .dayBreakPanel(palette, radius: palette.fieldRadius)
+                            .contentShape(RoundedRectangle(cornerRadius: palette.fieldRadius, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("\(value.rawValue) of 5, \(value.label)")
@@ -82,8 +83,8 @@ private struct WatchCheckIn: View {
 
     private func saved(_ rating: Rating) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Rating saved").font(.dayBreakWristTitle).accessibilityAddTraits(.isHeader)
-            Text("\(rating.value.rawValue) / 5").font(.dayBreakNumber)
+            Text("Rating saved").font(palette.wristTitleFont).accessibilityAddTraits(.isHeader)
+            Text("\(rating.value.rawValue) / 5").font(palette.numberFont)
                 .foregroundStyle(palette.accent).accessibilityLabel("\(rating.value.rawValue) of 5")
             Text(rating.value.label).font(.footnote).foregroundStyle(palette.muted)
             if model.disk.acknowledged.contains(rating.id) {

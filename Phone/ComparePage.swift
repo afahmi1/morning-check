@@ -4,10 +4,8 @@ import SwiftUI
 
 struct ComparePage: View {
     @ObservedObject var model: PhoneModel
-    @Environment(\.colorScheme) private var scheme
+    @Environment(\.dayBreakPalette) private var palette
     @Environment(\.dynamicTypeSize) private var typeSize
-
-    private var palette: DayBreakPalette { DayBreakPalette(scheme) }
 
     private struct Dot: Identifiable {
         let apple: Int
@@ -23,7 +21,7 @@ struct ComparePage: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Compare your mornings").font(.dayBreakDisplay).accessibilityAddTraits(.isHeader)
+                    Text("Compare your mornings").font(palette.displayFont).accessibilityAddTraits(.isHeader)
                     Text("See where Apple’s score and how rested you felt agree, and where they don’t.")
                         .foregroundStyle(palette.muted)
                 }
@@ -71,7 +69,7 @@ struct ComparePage: View {
 
     private func metric(_ number: Int, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(number, format: .number).font(.dayBreakNumber)
+            Text(number, format: .number).font(palette.numberFont)
             Text(label).font(.subheadline).foregroundStyle(palette.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -80,7 +78,7 @@ struct ComparePage: View {
     private func results(_ summary: Comparison) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Restedness and Sleep Score").font(.dayBreakSection).accessibilityAddTraits(.isHeader)
+                Text("Restedness and Sleep Score").font(palette.sectionFont).accessibilityAddTraits(.isHeader)
                 scatter(summary.pairs)
                 if let rho = summary.spearman {
                     Text("Rank correlation: \(rho.formatted(.number.precision(.fractionLength(2))))")
@@ -129,15 +127,15 @@ struct ComparePage: View {
                 AxisGridLine().foregroundStyle(palette.rule)
                 AxisValueLabel(anchor: .top, collisionResolution: .disabled) {
                     if let v = value.as(Int.self) {
-                        Text("\(v)").fixedSize().font(Thermocline.Font.mono(11, relativeTo: .caption2)).foregroundStyle(palette.muted)
+                        Text("\(v)").fixedSize().font(palette.axisFont).foregroundStyle(palette.muted)
                     }
                 }
             }
         }
         .chartYAxis {
-            AxisMarks(position: .leading, values: [1, 2, 3, 4, 5]) {
+            AxisMarks(position: palette.theme == .paperAsh ? .automatic : .leading, values: [1, 2, 3, 4, 5]) {
                 AxisGridLine().foregroundStyle(palette.rule)
-                AxisValueLabel().font(Thermocline.Font.mono(11, relativeTo: .caption2)).foregroundStyle(palette.muted)
+                AxisValueLabel().font(palette.axisFont).foregroundStyle(palette.muted)
             }
         }
         .chartXAxisLabel { Text("Apple Sleep Score").foregroundStyle(palette.muted) }
@@ -147,7 +145,7 @@ struct ComparePage: View {
 
     private func history(_ rows: [Morning]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Morning history").font(.dayBreakSection).accessibilityAddTraits(.isHeader)
+            Text("Morning history").font(palette.sectionFont).accessibilityAddTraits(.isHeader)
             LazyVStack(spacing: 0) {
                 DayBreakRule(palette: palette)
                 ForEach(rows) { row in

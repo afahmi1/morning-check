@@ -31,4 +31,5 @@ struct LocalFile<Value: Codable> {
 enum PeerKey {
     static let rating = "morning-rating-v1"
     static let ack = "morning-accepted-v1"
+    static let appearance = "daybreak-appearance-v1"
 }

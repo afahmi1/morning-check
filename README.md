@@ -14,7 +14,7 @@ This is a personal comparison, not a claim that the watch is wrong or that eithe
 
 ## Interface
 
-DayBreak uses the [Thermocline](https://github.com/afahmi1/thermocline) design system: a palette measured from blue-and-gold macaw, zebra finch and Gouldian finch photos, with light finch paper and dark macaw-throat ink. A top switcher keeps **Check-in** and **Compare** under one header, with medium-weight UI type, monospaced tabular numerals for ratings and scores, and grouped rows. The Watch uses the dark palette and puts the five choices first. The scarab and sunrise remain the app icon.
+In **Settings → Appearance**, choose **Thermocline** (default) or **Paper & Ash**, the original theme with serif prompts. Preview both themes, then pick System, Light or Dark. Thermocline offers seven accents; Paper and Ash each keep their original accent. Changes show immediately and carry to the paired Watch, which always uses the dark palette. The scarab and sunrise remain the app icon.
 
 ## Use it
 
@@ -46,7 +46,7 @@ Open `MorningCheck.xcodeproj` in Xcode. The iPhone target uses iOS 18+ APIs and 
 
 ## Privacy and boundaries
 
-- No network client, analytics, account, CloudKit, or iCloud Drive. Apple Watch and iPhone exchange only your rating payload and its receipt using Watch Connectivity. The paired phone holds the comparison. There is no Mac or iPad sync.
+- No network client, analytics, account, CloudKit, or iCloud Drive. Apple Watch and iPhone exchange your rating payload, its receipt, and your appearance settings using Watch Connectivity. The paired phone holds the comparison. There is no Mac or iPad sync.
 - Sleep access is optional and read-only. The transient interval query only signals a prompt; raw HealthKit samples are not persisted. The log lives in the app sandbox under Application Support with backup exclusion and protection until the first device unlock after restart, so transfers can be handled later in the background. To remove it, use **Erase iPhone log** and **Erase Watch log** separately. The iPhone ignores older queued Watch data after its log is erased. The app does not change Apple Health when you erase its log.
 - HealthKit exposes predefined data types; a third-party app cannot add a custom numerical Restedness chart to Apple Health. The two numbers appear together in DayBreak, **not** inside Health. No private API or spoofed symptom data is used.
 - This is a personal tracking prototype, not a medical tool, a validated diagnostic test, or a claim that Sleep Score should match subjective restedness on any particular morning.
@@ -60,7 +60,7 @@ Open `MorningCheck.xcodeproj` in Xcode. The iPhone target uses iOS 18+ APIs and 
 
 ## Run the checks
 
-`swift test` runs the core tests. To also run OCR against an actual screen layout, download the [public illustration linked from Apple Support 108906](https://cdsassets.apple.com/live/7WUAS350/images/health/ios-27-iphone-17-pro-health-sleep-sleep-score.png), then pass its local path as `MORNING_CHECK_APPLE_FIXTURE` to `swift test`. The image is not shipped with the source. Run the **MorningCheck** scheme’s UI tests on an iPhone simulator to verify the rating-first flow, workspace switcher, and comparison view. They use a disposable in-memory store. Watch Connectivity background transfers and HealthKit background delivery are not verified by simulators.
+`swift test` runs the core tests. To also run OCR against an actual screen layout, download the [public illustration linked from Apple Support 108906](https://cdsassets.apple.com/live/7WUAS350/images/health/ios-27-iphone-17-pro-health-sleep-sleep-score.png), then pass its local path as `MORNING_CHECK_APPLE_FIXTURE` to `swift test`. The image is not shipped with the source. Run the **MorningCheck** scheme’s UI tests on an iPhone simulator to verify the rating-first flow, workspace switcher, comparison view, and appearance choices. The tests use a disposable in-memory diary and isolated appearance preferences. Watch Connectivity background transfers and HealthKit background delivery are not verified by simulators.
 
 ## Contributing
 

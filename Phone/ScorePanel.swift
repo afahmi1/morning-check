@@ -6,7 +6,7 @@ struct ScorePanel: View {
     @ObservedObject var model: PhoneModel
     let day: String
     var active = true
-    @Environment(\.colorScheme) private var scheme
+    @Environment(\.dayBreakPalette) private var palette
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var typed = ""
     @State private var proposed: Score?
@@ -15,7 +15,6 @@ struct ScorePanel: View {
     @State private var scanning = false
     @FocusState private var typing: Bool
 
-    private var palette: DayBreakPalette { DayBreakPalette(scheme) }
     private var actionLayout: AnyLayout {
         typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10)) : AnyLayout(HStackLayout(spacing: 10))
     }
@@ -24,9 +23,9 @@ struct ScorePanel: View {
         let row = model.disk.diary[day]
         if row?.rating != nil {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Apple Sleep Score").font(.dayBreakSection).accessibilityAddTraits(.isHeader)
+                Text("Apple Sleep Score").font(palette.sectionFont).accessibilityAddTraits(.isHeader)
                 if let score = row?.score {
-                    Text("\(score.value) / 100").font(.dayBreakNumber)
+                    Text("\(score.value) / 100").font(palette.numberFont)
                         .accessibilityLabel("\(score.value) of 100")
                         .accessibilityIdentifier("confirmed-apple-score")
                     Text(score.source.label).font(.footnote).foregroundStyle(palette.muted)
@@ -45,9 +44,9 @@ struct ScorePanel: View {
                             .keyboardType(.numberPad).monospacedDigit()
                             .focused($typing).accessibilityIdentifier("apple-score-field")
                             .padding(.horizontal, 12).padding(.vertical, 8).frame(minHeight: 44)
-                            .background(palette.field, in: RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
+                            .background(palette.field, in: RoundedRectangle(cornerRadius: palette.fieldRadius, style: .continuous))
                             .overlay {
-                                RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous)
+                                RoundedRectangle(cornerRadius: palette.fieldRadius, style: .continuous)
                                     .strokeBorder(typing ? palette.accent : palette.outline, lineWidth: typing ? 2 : 1)
                                     .allowsHitTesting(false)
                             }
@@ -89,7 +88,7 @@ struct ScorePanel: View {
     private func suggestion(_ candidate: Score) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Detected \(candidate.value) / 100", systemImage: "checkmark.magnifyingglass")
-                .font(.dayBreakChoice).foregroundStyle(palette.accent)
+                .font(palette.choiceFont).foregroundStyle(palette.accent)
             Text("Check the number and date against Apple Health before saving.")
                 .font(.footnote).foregroundStyle(palette.muted)
             actionLayout {
@@ -100,7 +99,7 @@ struct ScorePanel: View {
             }
         }
         .padding(12).frame(maxWidth: .infinity, alignment: .leading)
-        .background(palette.selection, in: RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
+        .background(palette.selection, in: RoundedRectangle(cornerRadius: palette.fieldRadius, style: .continuous))
     }
 
     private func confirm(_ score: Score) {
