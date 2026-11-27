@@ -71,7 +71,7 @@ struct ComparePage: View {
 
     private func metric(_ number: Int, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(number, format: .number).font(.dayBreakDisplay.monospacedDigit())
+            Text(number, format: .number).font(.dayBreakNumber)
             Text(label).font(.subheadline).foregroundStyle(palette.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -95,8 +95,12 @@ struct ComparePage: View {
             .padding(16).frame(maxWidth: .infinity, alignment: .leading).dayBreakPanel(palette)
             if summary.highScore > 0 {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label("High score, low rest", systemImage: "circle.lefthalf.filled")
-                        .font(.subheadline.weight(.semibold)).foregroundStyle(palette.caution)
+                    Label {
+                        Text("High score, low rest").foregroundStyle(palette.ink)
+                    } icon: {
+                        Image(systemName: "circle.lefthalf.filled").foregroundStyle(palette.caution)
+                    }
+                    .font(.subheadline.weight(.semibold))
                     Text("\(summary.highButNotRested) of \(summary.highScore) high-score mornings felt only slightly rested or worse.")
                         .font(.subheadline.weight(.medium))
                     Text("High score: 81–100. Low restedness: 1–2.").font(.footnote).foregroundStyle(palette.muted)
@@ -119,17 +123,21 @@ struct ComparePage: View {
                 .accessibilityLabel("Sleep Score \(dot.apple), restedness \(dot.rested) of 5")
                 .accessibilityValue(dot.count == 1 ? "1 morning" : "\(dot.count) mornings")
         }
-        .chartXScale(domain: -2...102).chartYScale(domain: 0.7...5.3)
+        .chartXScale(domain: -2...102, range: .plotDimension(startPadding: 8, endPadding: 16)).chartYScale(domain: 0.7...5.3)
         .chartXAxis {
-            AxisMarks(values: typeSize.isAccessibilitySize ? [0, 50, 100] : [0, 25, 50, 75, 100]) {
+            AxisMarks(values: typeSize.isAccessibilitySize ? [0, 50, 100] : [0, 25, 50, 75, 100]) { value in
                 AxisGridLine().foregroundStyle(palette.rule)
-                AxisValueLabel().foregroundStyle(palette.muted)
+                AxisValueLabel(anchor: .top, collisionResolution: .disabled) {
+                    if let v = value.as(Int.self) {
+                        Text("\(v)").fixedSize().font(Thermocline.Font.mono(11, relativeTo: .caption2)).foregroundStyle(palette.muted)
+                    }
+                }
             }
         }
         .chartYAxis {
-            AxisMarks(values: [1, 2, 3, 4, 5]) {
+            AxisMarks(position: .leading, values: [1, 2, 3, 4, 5]) {
                 AxisGridLine().foregroundStyle(palette.rule)
-                AxisValueLabel().foregroundStyle(palette.muted)
+                AxisValueLabel().font(Thermocline.Font.mono(11, relativeTo: .caption2)).foregroundStyle(palette.muted)
             }
         }
         .chartXAxisLabel { Text("Apple Sleep Score").foregroundStyle(palette.muted) }

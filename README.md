@@ -14,7 +14,7 @@ This is a personal comparison, not a claim that the watch is wrong or that eithe
 
 ## Interface
 
-DayBreak pairs a warm Paper palette in light mode with a low-glare Ash palette in dark mode. A top switcher keeps **Check-in** and **Compare** under one header, with serif prompts and grouped rows. The Watch uses the same Ash palette and puts the five choices first. The scarab and sunrise remain the app icon.
+DayBreak uses the [Thermocline](https://github.com/afahmi1/thermocline) design system: a palette measured from blue-and-gold macaw, zebra finch and Gouldian finch photos, with light finch paper and dark macaw-throat ink. A top switcher keeps **Check-in** and **Compare** under one header, with medium-weight UI type, monospaced tabular numerals for ratings and scores, and grouped rows. The Watch uses the dark palette and puts the five choices first. The scarab and sunrise remain the app icon.
 
 ## Use it
 

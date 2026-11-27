@@ -107,7 +107,7 @@ private struct MorningHome: View {
                             .foregroundStyle(selected ? palette.accent : palette.muted)
                             .padding(.horizontal, 10).padding(.vertical, 8)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .background(selected ? palette.selection : .clear, in: RoundedRectangle(cornerRadius: 9))
+                            .background(selected ? palette.selection : .clear, in: RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -132,7 +132,7 @@ private struct MorningHome: View {
                     }
                     if let rating = model.disk.diary[day]?.rating {
                         Text("Rating saved").font(.dayBreakDisplay).accessibilityAddTraits(.isHeader)
-                        Text("\(rating.value.rawValue) / 5").font(.dayBreakSection.monospacedDigit())
+                        Text("\(rating.value.rawValue) / 5").font(.dayBreakNumberSection)
                             .foregroundStyle(palette.accent).accessibilityLabel("\(rating.value.rawValue) of 5")
                         Text(rating.value.label).foregroundStyle(palette.muted)
                     } else {
@@ -165,7 +165,7 @@ private struct MorningHome: View {
                 if value != .notAtAll { DayBreakRule(palette: palette).padding(.horizontal, 14) }
                 Button { _ = model.recordPhoneRating(value) } label: {
                     HStack(spacing: 12) {
-                        Text("\(value.rawValue)").font(.headline.monospacedDigit())
+                        Text("\(value.rawValue)").font(.dayBreakChoice)
                             .foregroundStyle(palette.accent)
                             .frame(minWidth: 26, alignment: .leading)
                         Text(value.label).font(.body.weight(.medium)).foregroundStyle(palette.ink)
