@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Ash at night, paper by day. The scarab artwork stays independent of the UI palette.
+/// Thermocline roles. Colors are Thermocline's dynamic light/dark tokens (dark on watchOS).
+/// The scarab artwork stays independent of the UI palette.
 struct DayBreakPalette {
     let canvas: Color
     let panel: Color
@@ -16,31 +17,29 @@ struct DayBreakPalette {
     let destructive: Color
 
     init(_ scheme: ColorScheme) {
-        let dark = scheme == .dark
-        canvas = Self.color(dark ? 0x232322 : 0xF4EEDD)
-        panel = Self.color(dark ? 0x2C2C2B : 0xFFFBF1)
-        field = Self.color(dark ? 0x353533 : 0xEAE2CC)
-        ink = Self.color(dark ? 0xEDE6D3 : 0x2E2C28)
-        muted = Self.color(dark ? 0xC5BCAB : 0x5F584B)
-        rule = Self.color(dark ? 0x47453F : 0xD9CFB6)
-        outline = Self.color(dark ? 0x79766C : 0x877E69)
-        accent = Self.color(dark ? 0xA48CFF : 0x943B16)
-        selection = Self.color(dark ? 0x352E40 : 0xF1DDC7)
-        steady = Self.color(dark ? 0xA3C997 : 0x39683E)
-        caution = Self.color(dark ? 0xE0B25E : 0x80510F)
-        destructive = Self.color(dark ? 0xFF9F9D : 0x9E3333)
-    }
-
-    private static func color(_ rgb: UInt32) -> Color {
-        Color(.sRGB, red: Double((rgb >> 16) & 255) / 255,
-              green: Double((rgb >> 8) & 255) / 255, blue: Double(rgb & 255) / 255, opacity: 1)
+        canvas = Thermocline.bg
+        panel = Thermocline.surface1
+        field = Thermocline.surface3
+        ink = Thermocline.text
+        muted = Thermocline.text2
+        rule = Thermocline.line
+        outline = Thermocline.text3.opacity(0.7)
+        accent = Thermocline.lead
+        selection = Thermocline.lead.opacity(0.14)
+        steady = Thermocline.success
+        caution = Thermocline.spark
+        destructive = Thermocline.danger
     }
 }
 
 extension Font {
-    static let dayBreakDisplay = Font.system(.largeTitle, design: .serif, weight: .semibold)
-    static let dayBreakSection = Font.system(.title2, design: .serif, weight: .semibold)
-    static let dayBreakWristTitle = Font.system(.title3, design: .serif, weight: .semibold)
+    static let dayBreakDisplay = Thermocline.Font.ui(34, weight: .medium, relativeTo: .largeTitle)
+    static let dayBreakSection = Thermocline.Font.ui(22, weight: .medium, relativeTo: .title2)
+    static let dayBreakWristTitle = Thermocline.Font.ui(18, weight: .medium, relativeTo: .title3)
+    /// Tabular numerals: restedness choices and the 0-100 score.
+    static let dayBreakNumber = Thermocline.Font.mono(34, weight: .medium, relativeTo: .largeTitle)
+    static let dayBreakNumberSection = Thermocline.Font.mono(22, weight: .medium, relativeTo: .title2)
+    static let dayBreakChoice = Thermocline.Font.mono(17, weight: .medium, relativeTo: .headline)
 }
 
 struct DayBreakRule: View {
@@ -52,7 +51,7 @@ struct DayBreakRule: View {
 }
 
 extension View {
-    func dayBreakPanel(_ palette: DayBreakPalette, radius: CGFloat = 12) -> some View {
+    func dayBreakPanel(_ palette: DayBreakPalette, radius: CGFloat = Thermocline.Radius.md) -> some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         return background(palette.panel, in: shape)
             .overlay { shape.strokeBorder(palette.rule, lineWidth: 1).allowsHitTesting(false) }
@@ -78,5 +77,6 @@ struct DayBreakActionStyle: ButtonStyle {
             .overlay { Capsule().strokeBorder(solid ? .clear : palette.outline, lineWidth: 1).allowsHitTesting(false) }
             .contentShape(Capsule())
             .opacity(configuration.isPressed ? 0.76 : 1)
+            .animation(Thermocline.Motion.micro, value: configuration.isPressed)
     }
 }

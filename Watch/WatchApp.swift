@@ -64,11 +64,11 @@ private struct WatchCheckIn: View {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 68 : 44), spacing: 4)], spacing: 4) {
                 ForEach(Restedness.allCases, id: \.rawValue) { value in
                     Button { model.record(value) } label: {
-                        Text("\(value.rawValue)").font(.headline.monospacedDigit().weight(.semibold))
+                        Text("\(value.rawValue)").font(.dayBreakChoice)
                             .foregroundStyle(palette.accent)
                             .frame(maxWidth: .infinity, minHeight: 44)
-                            .dayBreakPanel(palette, radius: 10)
-                            .contentShape(RoundedRectangle(cornerRadius: 10))
+                            .dayBreakPanel(palette, radius: Thermocline.Radius.sm)
+                            .contentShape(RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("\(value.rawValue) of 5, \(value.label)")
@@ -83,7 +83,7 @@ private struct WatchCheckIn: View {
     private func saved(_ rating: Rating) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Rating saved").font(.dayBreakWristTitle).accessibilityAddTraits(.isHeader)
-            Text("\(rating.value.rawValue) / 5").font(.dayBreakDisplay.monospacedDigit())
+            Text("\(rating.value.rawValue) / 5").font(.dayBreakNumber)
                 .foregroundStyle(palette.accent).accessibilityLabel("\(rating.value.rawValue) of 5")
             Text(rating.value.label).font(.footnote).foregroundStyle(palette.muted)
             if model.disk.acknowledged.contains(rating.id) {

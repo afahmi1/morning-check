@@ -71,7 +71,7 @@ struct ComparePage: View {
 
     private func metric(_ number: Int, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(number, format: .number).font(.dayBreakDisplay.monospacedDigit())
+            Text(number, format: .number).font(.dayBreakNumber)
             Text(label).font(.subheadline).foregroundStyle(palette.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

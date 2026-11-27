@@ -11,6 +11,7 @@
 		04C190D34D60833D876D5112 /* ScorePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF66120CECBB8838B364597F /* ScorePanel.swift */; };
 		0C7585C5D4B3DA912CCBB121 /* LocalFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3EE6760AFD6137F11AE410 /* LocalFile.swift */; };
 		1805D1887E7FE56AD29534BE /* WatchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D85683057550F7BF183C27CB /* WatchModel.swift */; };
+		22AC8F7037D3C6858149BEB1 /* Thermocline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4B23E61B7F2D5CBCD5D449 /* Thermocline.swift */; };
 		26D54584EB3D516326411F89 /* PromptStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */; };
 		35CAA5C2DC1AD6B4BC51CB6B /* Shortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69DAAC7577B3990894934D /* Shortcut.swift */; };
 		39359F85A463A3742F2963E1 /* DayBreakDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5621BBFE67DF44514441012 /* DayBreakDesign.swift */; };
@@ -24,6 +25,7 @@
 		9E013455541823D3C2FCC014 /* DayBreakDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5621BBFE67DF44514441012 /* DayBreakDesign.swift */; };
 		ADEAE76540671D8465005E07 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F97C6F8FFE92742EB3889F44 /* Assets.xcassets */; };
 		B8D7C4A4422450362B62303B /* PhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890066CFEF2DAC50D67E447C /* PhoneApp.swift */; };
+		BE245716569BCD84AB54A6B8 /* Thermocline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4B23E61B7F2D5CBCD5D449 /* Thermocline.swift */; };
 		C470BEA2BB824DE96DA3BEDD /* ComparePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F75BA23D27B5111CFE3EFB44 /* ComparePage.swift */; };
 		DBB09C79A8DAFC34848867EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F97C6F8FFE92742EB3889F44 /* Assets.xcassets */; };
 		E92EF7D6EE9A0A577351A0E4 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D74028E602350206AB563 /* SettingsPage.swift */; };
@@ -69,6 +71,7 @@
 		0F9CB2918312AED1FB3F39FA /* morning-check */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "morning-check"; path = .; sourceTree = SOURCE_ROOT; };
 		1A2D74028E602350206AB563 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		1EF3F2E60AB8E8A943B5F7CA /* PhoneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneModel.swift; sourceTree = "<group>"; };
+		1F4B23E61B7F2D5CBCD5D449 /* Thermocline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thermocline.swift; sourceTree = "<group>"; };
 		23077C32CC95E7D0F59DD756 /* MorningCheckUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MorningCheckUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2356453F3561C78699364616 /* WatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchApp.swift; sourceTree = "<group>"; };
 		73CC28158286D70E587E0545 /* DayBreakBrand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBreakBrand.swift; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 				E5621BBFE67DF44514441012 /* DayBreakDesign.swift */,
 				0D3EE6760AFD6137F11AE410 /* LocalFile.swift */,
 				C594B35ABE1BCCEFFC390764 /* PromptStyle.swift */,
+				1F4B23E61B7F2D5CBCD5D449 /* Thermocline.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -323,6 +327,7 @@
 				E92EF7D6EE9A0A577351A0E4 /* SettingsPage.swift in Sources */,
 				35CAA5C2DC1AD6B4BC51CB6B /* Shortcut.swift in Sources */,
 				643252FC40F7F6AD4ED6EA6F /* SleepSignal.swift in Sources */,
+				22AC8F7037D3C6858149BEB1 /* Thermocline.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +339,7 @@
 				39359F85A463A3742F2963E1 /* DayBreakDesign.swift in Sources */,
 				9AC3CF562428D9C3BFAC016E /* LocalFile.swift in Sources */,
 				26D54584EB3D516326411F89 /* PromptStyle.swift in Sources */,
+				BE245716569BCD84AB54A6B8 /* Thermocline.swift in Sources */,
 				F6E0BD42B38F0342DFC9BC6D /* WatchApp.swift in Sources */,
 				1805D1887E7FE56AD29534BE /* WatchModel.swift in Sources */,
 			);
@@ -423,7 +429,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -499,7 +505,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

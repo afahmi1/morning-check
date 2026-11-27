@@ -26,7 +26,7 @@ struct ScorePanel: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text("Apple Sleep Score").font(.dayBreakSection).accessibilityAddTraits(.isHeader)
                 if let score = row?.score {
-                    Text("\(score.value) / 100").font(.dayBreakDisplay.monospacedDigit())
+                    Text("\(score.value) / 100").font(.dayBreakNumber)
                         .accessibilityLabel("\(score.value) of 100")
                         .accessibilityIdentifier("confirmed-apple-score")
                     Text(score.source.label).font(.footnote).foregroundStyle(palette.muted)
@@ -45,9 +45,9 @@ struct ScorePanel: View {
                             .keyboardType(.numberPad).monospacedDigit()
                             .focused($typing).accessibilityIdentifier("apple-score-field")
                             .padding(.horizontal, 12).padding(.vertical, 8).frame(minHeight: 44)
-                            .background(palette.field, in: RoundedRectangle(cornerRadius: 10))
+                            .background(palette.field, in: RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
                             .overlay {
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous)
                                     .strokeBorder(typing ? palette.accent : palette.outline, lineWidth: typing ? 2 : 1)
                                     .allowsHitTesting(false)
                             }
@@ -89,7 +89,7 @@ struct ScorePanel: View {
     private func suggestion(_ candidate: Score) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Detected \(candidate.value) / 100", systemImage: "checkmark.magnifyingglass")
-                .font(.headline.monospacedDigit()).foregroundStyle(palette.accent)
+                .font(.dayBreakChoice).foregroundStyle(palette.accent)
             Text("Check the number and date against Apple Health before saving.")
                 .font(.footnote).foregroundStyle(palette.muted)
             actionLayout {
@@ -100,7 +100,7 @@ struct ScorePanel: View {
             }
         }
         .padding(12).frame(maxWidth: .infinity, alignment: .leading)
-        .background(palette.selection, in: RoundedRectangle(cornerRadius: 10))
+        .background(palette.selection, in: RoundedRectangle(cornerRadius: Thermocline.Radius.sm, style: .continuous))
     }
 
     private func confirm(_ score: Score) {
