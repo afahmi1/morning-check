@@ -23,6 +23,7 @@ private struct SettingsPage: View {
                 VStack(alignment: .leading, spacing: 24) {
                     appearance
                     prompts
+                    scores
                     stages
                     privacy
                 }
@@ -119,6 +120,27 @@ private struct SettingsPage: View {
                     }
                 }
                 .font(.footnote).foregroundStyle(palette.muted)
+            }
+        }
+    }
+
+    private var scores: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            DayBreakRule(palette: palette)
+            Toggle("Save alert scores automatically", isOn: Binding(get: { model.automaticAlertScores }, set: {
+                model.changeAutomaticAlertScores(to: $0)
+            }))
+            .font(.body.weight(.semibold)).frame(minHeight: 44)
+            .accessibilityIdentifier("automatic-alert-scores-setting")
+            Text("Requires the iPhone Shortcuts bridge with Notification Body, Date, Title and App. Matching scores save without typing or confirmation, stay hidden until you rate, and are labeled as alert copies—not independently verified Health readings. Missing or unsupported alerts leave a gap.")
+                .font(.footnote).foregroundStyle(palette.muted)
+            if model.automaticAlertScores {
+                Text(model.scoreImportMessage).font(.footnote).foregroundStyle(palette.muted)
+                    .accessibilityIdentifier("automatic-score-import-status")
+                if let time = model.lastScoreImportCheck {
+                    Text(time, format: .dateTime.month(.abbreviated).day().hour().minute())
+                        .font(.footnote.monospacedDigit()).foregroundStyle(palette.muted)
+                }
             }
         }
     }

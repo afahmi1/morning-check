@@ -49,13 +49,14 @@ public struct Rating: Codable, Equatable, Sendable {
 }
 
 public enum ScoreSource: String, Codable, Sendable {
-    case manual, screenshot, notification
+    case manual, screenshot, notification, automaticNotification
 
     public var label: String {
         switch self {
         case .manual: "Typed from Apple Health"
         case .screenshot: "Read from screenshot, confirmed by you"
         case .notification: "Read from alert text, confirmed by you"
+        case .automaticNotification: "Copied automatically from Health alert; not independently verified"
         }
     }
 }
@@ -79,6 +80,7 @@ public struct Morning: Codable, Equatable, Identifiable, Sendable {
     public fileprivate(set) var score: Score?
     public fileprivate(set) var candidate: Score?
     public fileprivate(set) var wakeStage: WakeStage?
+    public fileprivate(set) var automaticScoreDismissed: Bool?
 }
 
 public struct Diary: Codable, Equatable, Sendable {
@@ -124,6 +126,16 @@ public struct Diary: Codable, Equatable, Sendable {
     }
 
     @discardableResult
+    public mutating func importAutomatically(_ score: Score, on day: String) -> Bool {
+        guard score.isValid, score.source == .automaticNotification else { return false }
+        var row = byDay[day] ?? Morning(id: day)
+        guard row.score == nil, row.candidate == nil, row.automaticScoreDismissed != true else { return false }
+        row.score = score
+        byDay[day] = row
+        return true
+    }
+
+    @discardableResult
     public mutating func confirm(_ score: Score, on day: String) -> Bool {
         guard score.isValid, var row = byDay[day], row.rating != nil else { return false }
         row.score = score
@@ -136,7 +148,8 @@ public struct Diary: Codable, Equatable, Sendable {
         guard var row = byDay[day] else { return }
         row.score = nil
         row.candidate = nil
-        byDay[day] = row.rating == nil ? nil : row
+        row.automaticScoreDismissed = true
+        byDay[day] = row
     }
 }
 
@@ -165,7 +178,7 @@ public struct Comparison: Sendable {
         }
         self.pairs = pairs
         noScore = rows.filter { $0.rating != nil && $0.score == nil }.count
-        awaitingRating = rows.filter { $0.rating == nil && $0.candidate != nil }.count
+        awaitingRating = rows.filter { $0.rating == nil && ($0.candidate != nil || $0.score != nil) }.count
         highScore = pairs.filter { $0.score.value >= 81 }.count
         highButNotRested = pairs.filter { $0.score.value >= 81 && $0.rating.rawValue <= 2 }.count
         spearman = Self.rankCorrelation(pairs)
