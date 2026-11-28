@@ -33,8 +33,11 @@ struct ScorePanel: View {
                         .font(.subheadline.weight(.medium)).foregroundStyle(palette.destructive)
                         .frame(minHeight: 44, alignment: .leading)
                 } else {
-                    Text("Apple Health doesn’t share the exact score with DayBreak. Enter the score for \(day), or read it from a screenshot.")
+                    Text(model.automaticAlertScores
+                         ? "Waiting for a matching Health alert. A supported score saves automatically, without typing or confirmation."
+                         : "Apple Health doesn’t share the exact score with DayBreak. Enter the score for \(day), or read it from a screenshot.")
                         .font(.subheadline).foregroundStyle(palette.muted)
+                    if !model.automaticAlertScores {
                     if let candidate = proposed ?? row?.candidate {
                         suggestion(candidate)
                     }
@@ -62,6 +65,7 @@ struct ScorePanel: View {
                     }
                     .buttonStyle(DayBreakActionStyle(palette: palette, prominence: .secondary))
                     .disabled(scanning)
+                    }
                     if !feedback.isEmpty { Text(feedback).font(.footnote).foregroundStyle(palette.muted) }
                 }
             }

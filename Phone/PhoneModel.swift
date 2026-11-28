@@ -60,6 +60,9 @@ final class PhoneModel: NSObject, ObservableObject {
     @Published private(set) var storageError: String?
     @Published private(set) var showCheckIn = 0
     @Published private(set) var wakeStagesEnabled: Bool
+    @Published private(set) var automaticAlertScores: Bool
+    @Published private(set) var scoreImportMessage = "No alert import checked yet."
+    @Published private(set) var lastScoreImportCheck: Date?
     @Published private(set) var stageAccessInProgress = false
     @Published private(set) var stageAccessMessage: String?
     @Published private(set) var stageReads: [String: StageReadState] = [:]
@@ -99,6 +102,11 @@ final class PhoneModel: NSObject, ObservableObject {
         mode = isolated ? .off : PromptMode(rawValue: UserDefaults.standard.string(forKey: "morningPromptMode") ?? "") ?? .off
         stageTestFixture = useStageFixture
         wakeStagesEnabled = isolated ? useStageFixture : UserDefaults.standard.bool(forKey: "logWakeStage")
+        automaticAlertScores = !isolated && UserDefaults.standard.bool(forKey: "automaticAlertScores")
+        if !isolated {
+            scoreImportMessage = UserDefaults.standard.string(forKey: "lastAlertImportOutcome") ?? "No alert import checked yet."
+            lastScoreImportCheck = UserDefaults.standard.object(forKey: "lastAlertImportCheck") as? Date
+        }
         super.init()
     }
 
@@ -119,6 +127,15 @@ final class PhoneModel: NSObject, ObservableObject {
                 }
             }
             disk = fixture
+        }
+        #endif
+        #if DEBUG
+        if file == nil, ProcessInfo.processInfo.arguments.contains("-automatic-alert-score-test-fixture") {
+            // Synthetic domain-boundary fixture in the isolated in-memory diary only.
+            automaticAlertScores = true
+            if let score = Score(100, source: .automaticNotification) {
+                _ = disk.diary.importAutomatically(score, on: WakeDay.key(.now))
+            }
         }
         #endif
         guard file != nil else { return }
@@ -252,12 +269,17 @@ final class PhoneModel: NSObject, ObservableObject {
         } while recheckSleep
     }
 
-    func acceptAlertText(_ text: String?, at deliveryDate: Date?) async -> String {
+    func acceptAlertText(_ text: String?, at deliveryDate: Date?, title: String? = nil, sourceApp: String? = nil) async -> String {
         start()
         if !mayWrite { loadDiary() }
         let now = Date.now
         // Explicit Shortcuts input can stage a score without opt-in to alert prompts.
-        let scoreStatus = stageAlertScore(text, at: deliveryDate, now: now)
+        let scoreStatus: String?
+        if automaticAlertScores {
+            scoreStatus = importAutomaticScore(text, title: title, sourceApp: sourceApp, at: deliveryDate, now: now)
+        } else {
+            scoreStatus = stageAlertScore(text, at: deliveryDate, now: now)
+        }
         guard mode.accepts(.appleAlert) else {
             return scoreStatus ?? "No score text was passed. Select an iPhone alert prompt option to use this action for reminders."
         }
@@ -272,6 +294,44 @@ final class PhoneModel: NSObject, ObservableObject {
         guard eraseCutoff == disk.discardedThrough else { return outcome.description }
         recordCheck(outcome, for: .appleAlert)
         return "\(outcome.description) \(capture)"
+    }
+
+    func changeAutomaticAlertScores(to enabled: Bool) {
+        automaticAlertScores = enabled
+        if file != nil { UserDefaults.standard.set(enabled, forKey: "automaticAlertScores") }
+    }
+
+    private func importAutomaticScore(_ text: String?, title: String?, sourceApp: String?, at deliveryDate: Date?, now: Date) -> String {
+        let message: String
+        switch AutomaticScoreInput.evaluate(text: text, title: title, sourceApp: sourceApp, receivedAt: deliveryDate, now: now) {
+        case .sourceMismatch: message = "No score saved: the automation must pass the Health app and a recognized Sleep Score title."
+        case .missingTimestamp: message = "No score saved: the alert’s original date was not supplied."
+        case .stale: message = "No score saved: the alert is not recent and from today."
+        case .noScore: message = "No score saved: no single supported score matched the alert title."
+        case .score(let score, let day):
+            guard file != nil, mayWrite else { return recordScoreImport("No score saved: the local log is unavailable.", at: now) }
+            if let cutoff = disk.discardedThrough, let deliveryDate, deliveryDate <= cutoff {
+                return recordScoreImport("No score saved: the alert predates the log erase.", at: now)
+            }
+            var next = disk
+            guard next.diary.importAutomatically(score, on: day) else {
+                return recordScoreImport("No score replaced: this morning already has a score, candidate, or removed-score marker.", at: now)
+            }
+            message = save(next) ? "Score copied automatically from Health alert. No confirmation needed."
+                : "Couldn’t save the automatic score locally."
+        }
+        return recordScoreImport(message, at: now)
+    }
+
+    private func recordScoreImport(_ message: String, at time: Date) -> String {
+        // Only fixed technical outcomes and check time; never score values or alert text.
+        scoreImportMessage = message
+        lastScoreImportCheck = time
+        if file != nil {
+            UserDefaults.standard.set(message, forKey: "lastAlertImportOutcome")
+            UserDefaults.standard.set(time, forKey: "lastAlertImportCheck")
+        }
+        return message
     }
 
     private func stageAlertScore(_ text: String?, at deliveryDate: Date?, now: Date) -> String? {

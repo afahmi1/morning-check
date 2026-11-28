@@ -3,14 +3,17 @@ import Foundation
 
 struct MorningCheckFromAlert: AppIntent {
     static let title: LocalizedStringResource = "Check In from Apple Sleep Alert"
-    static let description = IntentDescription("Requests a morning check-in if iPhone alert prompts are enabled. If you pass the original alert text and receipt time, it can also prepare a score for review after rating. It does not read Apple's Sleep Score from Health.")
+    static let description = IntentDescription("Requests a check-in if alert prompts are enabled. With automatic alert scores enabled, pass Notification Body, Date, Title and App to copy a matching score without confirmation. It does not read the score from HealthKit.")
     static let openAppWhenRun = false
 
     @Parameter(title: "Sleep Score notification text") var notificationText: String?
     @Parameter(title: "Notification received at") var receivedAt: Date?
+    @Parameter(title: "Notification title") var notificationTitle: String?
+    @Parameter(title: "Notification app") var notificationApp: String?
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let message = await PhoneModel.shared.acceptAlertText(notificationText, at: receivedAt)
+        let message = await PhoneModel.shared.acceptAlertText(notificationText, at: receivedAt,
+                                                             title: notificationTitle, sourceApp: notificationApp)
         return .result(dialog: IntentDialog(stringLiteral: message))
     }
 }

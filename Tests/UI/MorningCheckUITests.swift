@@ -2,6 +2,49 @@ import XCTest
 
 final class MorningCheckUITests: XCTestCase {
     @MainActor
+    func testAutomaticAlertScoreNeedsRatingButNoConfirmation() {
+        let app = XCUIApplication()
+        // Synthetic boundary value in a disposable in-memory diary; never live Health data.
+        app.launchArguments = ["-isolated-ui-test", "-automatic-alert-score-test-fixture"]
+        app.launch()
+        XCTAssertTrue(app.buttons["phone-rating-3"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts["confirmed-apple-score"].exists)
+        XCTAssertFalse(app.textFields["apple-score-field"].exists)
+        app.buttons["workspace-compare"].tap()
+        XCTAssertFalse(app.staticTexts["confirmed-apple-score"].exists)
+        XCTAssertEqual(app.descendants(matching: .any)["pair-count"].firstMatch.label, "0 mornings with a score")
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "morning-history-")).firstMatch.exists)
+        app.buttons["workspace-checkIn"].tap()
+        app.buttons["phone-rating-3"].tap()
+        let score = app.staticTexts["confirmed-apple-score"]
+        reveal(score, in: app)
+        XCTAssertTrue(score.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Copied automatically from Health alert; not independently verified"].exists)
+        XCTAssertFalse(app.buttons["Confirm 100"].exists)
+        XCTAssertFalse(app.buttons["Save score"].exists)
+        capture("Automatic alert score after rating (synthetic isolated fixture)")
+        app.buttons["workspace-compare"].tap()
+        XCTAssertEqual(app.descendants(matching: .any)["pair-count"].firstMatch.label, "1 morning with a score")
+    }
+
+    @MainActor
+    func testAutomaticAlertSettingStartsOffAndCanBeEnabled() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-isolated-ui-test"]
+        app.launch()
+        app.buttons["Settings"].tap()
+        let setting = app.switches["automatic-alert-scores-setting"]
+        reveal(setting, in: app)
+        XCTAssertTrue(setting.isHittable)
+        XCTAssertEqual(setting.value as? String, "0")
+        setting.tap()
+        XCTAssertEqual(setting.value as? String, "1")
+        let status = app.staticTexts["automatic-score-import-status"]
+        reveal(status, in: app)
+        XCTAssertTrue(status.exists)
+    }
+
+    @MainActor
     func testRatingFirstThenPairWithScore() {
         let app = XCUIApplication()
         app.launchArguments = ["-isolated-ui-test"]
